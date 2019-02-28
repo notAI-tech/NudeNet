@@ -35,5 +35,5 @@ pip install barenet
 from barenet import BareNet
 detector = BareNet('checkpoint_path')
 detector.detect('bikini_girl.jpg', thresh=0.4)
-# [{'class': 'C_BREAST', 'prob': 0.983704, 'box': array([251, 388, 411, 564])}, {'class': 'C_BREAST', 'prob': 0.98258233, 'box': array([435, 408, 570, 570])}, {'class': 'X_BELLY', 'prob': 0.9819952, 'box': array([312, 566, 545, 828])}, {'class': 'C_FE_GENITALIA', 'prob': 0.8241659, 'box': array([398, 877, 518, 992])}]
+# [{'class': 'C_BREAST', 'prob': 0.983704, 'box': [251, 388, 411, 564]}, {'class': 'C_BREAST', 'prob': 0.98258233, 'box': [435, 408, 570, 570]}, {'class': 'X_BELLY', 'prob': 0.9819952, 'box': [312, 566, 545, 828]}, {'class': 'C_FE_GENITALIA', 'prob': 0.8241659, 'box': [398, 877, 518, 992]}]
 ```
