@@ -1,7 +1,7 @@
 # BareNet
 Open Sourcing Unbiased Nudity Detection
 
-# Note: Entire credit for collecting this dataset goes to Jae Jin https://github.com/Kadantte
+# Note: Entire credit for collecting the object recognition dataset goes to Jae Jin and his team https://github.com/Kadantte
 
 ![](https://i.imgur.com/5J9ESnu.png) ![](https://i.imgur.com/Fs6exOx.png)
 
