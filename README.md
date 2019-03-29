@@ -1,39 +1,57 @@
-# BareNet
-Open Sourcing Unbiased Nudity Detection
+# NudeNet: An ensemble of Neural Nets for Nudity Detection and Censoring
 
-# Note: Entire credit for collecting the object recognition dataset goes to Jae Jin and his team https://github.com/Kadantte
-
-![](https://i.imgur.com/5J9ESnu.png) ![](https://i.imgur.com/Fs6exOx.png)
+![](https://i.imgur.com/Fs6exOx.png)
 
 
-# Classes
-X_BELLY -> Exposed Belly
+# Classification Classes
 
-X_BUTTOCKS -> Exposed Buttocks
+nude -> image contains nudity
 
-X_BREAST -> Exposed Female Breast
+safe -> image doesn't contain nudity
 
-C_BREAST -> Covered Female Breast
+# Detection Classes
+BELLY -> exposed belly (both male and female)
 
-X_FE_GENITALIA -> Exposed Female Genitalia
+BUTTOCKS -> exposed buttocks (both male and female)
 
-C_FE_GENITALIA -> Covered Female Genitalia
+F_BREAST -> exposed female breast
 
-X_M_GENETALIA -> Exposed Male Genetalia
+F_GENITALIA -> exposed female genitalia
 
-X_M_BREAST -> Exposed Male Breast
+M_GENETALIA -> exposed male genetalia
 
-C_M_GENETALIA -> Covered Male Genetalia (Coming Soon)
+M_BREAST -> exposed male breast
 
 # Insallation
 ```
-pip install barenet
+pip install nudenet
 ```
 
-# Usage
+# Classifier Usage
 ```
-from barenet import BareNet
-detector = BareNet('checkpoint_path')
-detector.detect('bikini_girl.jpg', thresh=0.4)
-# [{'class': 'C_BREAST', 'prob': 0.983704, 'box': [251, 388, 411, 564]}, {'class': 'C_BREAST', 'prob': 0.98258233, 'box': [435, 408, 570, 570]}, {'class': 'X_BELLY', 'prob': 0.9819952, 'box': [312, 566, 545, 828]}, {'class': 'C_FE_GENITALIA', 'prob': 0.8241659, 'box': [398, 877, 518, 992]}]
+from NudeNet import NudeClassifier
+classifier = NudeClassifier('classifier_checkpoint_path')
+classifier.classify('path_to_nude_image')
+# {'path_to_nude_image': {'safe': 5.8822202e-08, 'nude': 1.0}}
 ```
+
+# Detector Usage
+```
+from NudeNet import NudeDetector
+detector = NudeDetector('detector_checkpoint_path')
+
+# Performing detection
+detector.detect('path_to_nude_image')
+# [{'box': [352, 688, 550, 858], 'score': 0.9603578, 'label': 'BELLY'}, {'box': [507, 896, 586, 1055], 'score': 0.94103414, 'label': 'F_GENITALIA'}, {'box': [221, 467, 552, 650], 'score': 0.8011624, 'label': 'F_BREAST'}, {'box': [359, 464, 543, 626], 'score': 0.6324697, 'label': 'F_BREAST'}]
+
+# Censoring an image
+detector.censor('path_to_nude_image', out_path='censored_image_path', visualize=False)
+
+```
+
+
+#To Do:
+1. Improve Documentation for the functions. (Right now user has to see the function definition to understand all the params)
+2. Convert these models into tflite, tfjs and create another repo that used tfjs to perform in browser detection and censor.
+
+Note: Entire credit for collecting the object recognition dataset goes to Jae Jin and his team https://github.com/Kadantte
