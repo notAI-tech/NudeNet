@@ -4,11 +4,8 @@ from keras_retinanet.utils.image import read_image_bgr, preprocess_image, resize
 from keras_retinanet.utils.visualization import draw_box, draw_caption
 from keras_retinanet.utils.colors import label_color
 
-import matplotlib.pyplot as plt
 import cv2
-import os
 import numpy as np
-import time
 
 class Detector():
     detection_model = None
