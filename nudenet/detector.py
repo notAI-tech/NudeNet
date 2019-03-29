@@ -27,7 +27,7 @@ class Detector():
         '''
         Detector.detection_model = models.load_model(model_path)
     
-    def predict(self, img_path, min_prob=0.6):
+    def detect(self, img_path, min_prob=0.6):
         image = read_image_bgr(img_path)
         image = preprocess_image(image)
         image, scale = resize_image(image)
