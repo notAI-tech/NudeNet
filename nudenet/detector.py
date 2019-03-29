@@ -48,7 +48,7 @@ class Detector():
             print('No out_path passed and visualize is set to false. There is no point in running this function then.')
 
         image = cv2.imread(img_path)
-        boxes = Detector.predict(self, img_path)
+        boxes = Detector.detect(self, img_path)
         boxes = [i['box'] for i in boxes if i['label'] in parts_to_blur]
 
         for box in boxes:
