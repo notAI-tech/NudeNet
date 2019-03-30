@@ -1,6 +1,6 @@
 # NudeNet: An ensemble of Neural Nets for Nudity Detection and Censoring
 
-Demo image can be found at https://i.imgur.com/rga6845.jpg (NSFW)
+Uncensored version of the following image can be found at https://i.imgur.com/rga6845.jpg (NSFW)
 
 ![](https://i.imgur.com/2mhyqnt.jpg)
 
