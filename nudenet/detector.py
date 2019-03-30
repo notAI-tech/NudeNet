@@ -22,7 +22,7 @@ class Detector():
         '''
             model = Classifier('path_to_weights')
         '''
-        Detector.detection_model = models.load_model(model_path)
+        Detector.detection_model = models.load_model(model_path, backbone_name='resnet101')
     
     def detect(self, img_path, min_prob=0.6):
         image = read_image_bgr(img_path)
