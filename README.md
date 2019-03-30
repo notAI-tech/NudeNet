@@ -31,7 +31,7 @@ pip install nudenet
 
 # Classifier Usage
 ```
-from NudeNet import NudeClassifier
+from nudenet import NudeClassifier
 classifier = NudeClassifier('classifier_checkpoint_path')
 classifier.classify('path_to_nude_image')
 # {'path_to_nude_image': {'safe': 5.8822202e-08, 'nude': 1.0}}
@@ -39,7 +39,7 @@ classifier.classify('path_to_nude_image')
 
 # Detector Usage
 ```
-from NudeNet import NudeDetector
+from nudenet import NudeDetector
 detector = NudeDetector('detector_checkpoint_path')
 
 # Performing detection
