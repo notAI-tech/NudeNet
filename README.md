@@ -1,6 +1,8 @@
 # NudeNet: An ensemble of Neural Nets for Nudity Detection and Censoring
 
-![](https://i.imgur.com/Fs6exOx.png)
+Demo image can be found at https://i.imgur.com/rga6845.jpg (NSFW)
+
+![](https://i.imgur.com/2mhyqnt.jpg)
 
 
 # Classification Classes
