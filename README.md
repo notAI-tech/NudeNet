@@ -27,6 +27,8 @@ M_BREAST -> exposed male breast
 # Insallation
 ```
 pip install nudenet
+or
+pip install git+https://github.com/bedapudi6788/NudeNet
 ```
 
 # Classifier Usage
