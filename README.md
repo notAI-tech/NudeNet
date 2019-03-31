@@ -60,5 +60,5 @@ detector.censor('path_to_nude_image', out_path='censored_image_path', visualize=
 1. Improve Documentation for the functions. (Right now user has to see the function definition to understand all the params)
 2. Convert these models into tflite, tfjs and create another repo that used tfjs to perform in browser detection and censor.
 
-Note: Entire credit for collecting the object recognition dataset goes to http://www.cti-community.net/ (NSFW). The link for their api and the discord are as follows API here: http://pury.fi/ Discord: https://discord.gg/k4qM4Jh
+# Note: Entire credit for collecting the object recognition dataset goes to http://www.cti-community.net/ (NSFW). The link for their api and the discord are as follows API here: http://pury.fi/ Discord: https://discord.gg/k4qM4Jh
  
