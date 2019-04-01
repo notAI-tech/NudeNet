@@ -6,6 +6,8 @@ Uncensored version of the following image can be found at https://i.imgur.com/rg
 
 ![](https://i.imgur.com/2mhyqnt.jpg)
 
+Classification scores on the data available at https://dataturks.com/projects/Mohan/NSFW(Nudity%20Detection)%20Image%20Moderation%20Datatset
+![](https://i.imgur.com/lXvvsdN.jpg)
 
 # Classification Classes
 
