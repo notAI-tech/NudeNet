@@ -1,5 +1,11 @@
 # NudeNet: An ensemble of Neural Nets for Nudity Detection and Censoring
 
+
+
+[![DOI](https://zenodo.org/badge/173154449.svg)](https://zenodo.org/badge/latestdoi/173154449)
+
+
+
 Pre-trained models available at https://github.com/bedapudi6788/NudeNet-models/
 
 Uncensored version of the following image can be found at https://i.imgur.com/rga6845.jpg (NSFW)
