@@ -70,3 +70,7 @@ detector.censor('path_to_nude_image', out_path='censored_image_path', visualize=
 
 # Note: Entire credit for collecting the object recognition dataset goes to http://www.cti-community.net/ (NSFW). The link for their api and the discord are as follows API here: http://pury.fi/ Discord: https://discord.gg/k4qM4Jh
  
+
+# LICENSE:
+
+Although nudenet is licensed under GPL, if you want to use it commercially without open sourcing your code please email me or raise a issue in this repo so that I can provide you explicit written permission to use as you wish. The only reason for doing this is, it would be nice to know if some company is using my work.
