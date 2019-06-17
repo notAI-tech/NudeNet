@@ -5,6 +5,8 @@
 [![DOI](https://zenodo.org/badge/173154449.svg)](https://zenodo.org/badge/latestdoi/173154449)
 
 
+Demo of the classifier available at http://bpraneeth.com/projects/nudenet
+
 
 Pre-trained models available at https://github.com/bedapudi6788/NudeNet-models/
 
