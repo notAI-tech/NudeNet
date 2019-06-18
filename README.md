@@ -65,6 +65,7 @@ detector.censor('path_to_nude_image', out_path='censored_image_path', visualize=
 
 ```
 
+#Classifier data available at https://archive.org/details/NudeNet_classifier_dataset_v1
 
 #To Do:
 1. Improve Documentation for the functions. (Right now user has to see the function definition to understand all the params)
