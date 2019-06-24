@@ -43,7 +43,7 @@ class Classifier():
         Classifier.nsfw_model = keras.models.load_model(model_path)
 
 
-    def classify(self, image_paths = [], batch_size = 32, image_size = (256, 256), categories = ['nude', 'safe']):
+    def classify(self, image_paths = [], batch_size = 32, image_size = (256, 256), categories = ['unsafe', 'safe']):
         '''
             inputs:
                 image_paths: list of image paths or can be a string too (for single image)
