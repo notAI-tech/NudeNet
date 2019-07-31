@@ -32,11 +32,11 @@ F_BREAST -> exposed female breast
 
 F_GENITALIA -> exposed female genitalia
 
-M_GENETALIA -> exposed male genetalia
+M_GENITALIA -> exposed male genitalia
 
 M_BREAST -> exposed male breast
 
-# Insallation
+# Installation
 ```
 pip install nudenet
 or
@@ -96,4 +96,4 @@ detector.censor('path_to_nude_image', out_path='censored_image_path', visualize=
 
 # LICENSE:
 
-Although nudenet is licensed under GPL, if you want to use it commercially without open sourcing your code please email me or raise a issue in this repo so that I can provide you explicit written permission to use as you wish. The only reason for doing this is, it would be nice to know if some company is using my work.
+Although nudenet is licensed under GPL, if you want to use it commercially without open sourcing your code please email me or raise an issue in this repo so that I can provide you explicit written permission to use as you wish. The only reason for doing this is, it would be nice to know if some company is using my work.
