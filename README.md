@@ -7,6 +7,8 @@
 
 Demo of the classifier available at http://bpraneeth.com/projects/nudenet
 
+Code used to create the demo available at https://github.com/bedapudi6788/NudeNet/issues/16#issuecomment-522936659
+
 
 Pre-trained models available at https://github.com/bedapudi6788/NudeNet-models/
 
