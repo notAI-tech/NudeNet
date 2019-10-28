@@ -39,14 +39,14 @@ M_GENITALIA -> exposed male genitalia
 M_BREAST -> exposed male breast
 
 # Installation
-```
+```bash
 pip install nudenet
-or
+# or
 pip install git+https://github.com/bedapudi6788/NudeNet
 ```
 
 # Classifier Usage
-```
+```python
 from nudenet import NudeClassifier
 classifier = NudeClassifier('classifier_checkpoint_path')
 classifier.classify('path_to_nude_image')
@@ -54,7 +54,7 @@ classifier.classify('path_to_nude_image')
 ```
 
 # Classifier now available with tfserving docker image
-```
+```bash
 # Get the docker image
 docker pull bedapudi6788/nudeclassifier:v1
 docker run -d -p 8500:8500 bedapudi6788/nudeclassifier:v1
@@ -62,6 +62,9 @@ docker run -d -p 8500:8500 bedapudi6788/nudeclassifier:v1
 # Installing python client
 pip install nudeclient
 
+```
+
+```python
 import nudeclient
 # Single image prediction
 nudeclient.predict('path_to_nude_image')
@@ -74,7 +77,7 @@ nudeclient.predict(['path_to_image_1', 'path_to_image2])
 ```
 
 # Detector Usage
-```
+```python
 from nudenet import NudeDetector
 detector = NudeDetector('detector_checkpoint_path')
 
