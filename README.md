@@ -10,7 +10,6 @@ Demo of the classifier available at http://bpraneeth.com/projects/nudenet
 Code used to create the demo available at https://github.com/bedapudi6788/NudeNet/issues/16#issuecomment-522936659
 
 
-Pre-trained models available at https://github.com/bedapudi6788/NudeNet-models/
 
 Uncensored version of the following image can be found at https://i.imgur.com/rga6845.jpg (NSFW)
 
@@ -48,7 +47,7 @@ pip install git+https://github.com/bedapudi6788/NudeNet
 # Classifier Usage
 ```python
 from nudenet import NudeClassifier
-classifier = NudeClassifier('classifier_checkpoint_path')
+classifier = NudeClassifier()
 classifier.classify('path_to_nude_image')
 # {'path_to_nude_image': {'safe': 5.8822202e-08, 'unsafe': 1.0}}
 ```
@@ -79,7 +78,7 @@ nudeclient.predict(['path_to_image_1', 'path_to_image2])
 # Detector Usage
 ```python
 from nudenet import NudeDetector
-detector = NudeDetector('detector_checkpoint_path')
+detector = NudeDetector()
 
 # Performing detection
 detector.detect('path_to_nude_image')
