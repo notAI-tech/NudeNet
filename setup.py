@@ -24,7 +24,8 @@ VERSION = '1.0.5'
 REQUIRED = [
     'keras==2.2.4',
     'opencv-python==4.0.0.21',
-    'keras-retinanet==0.5.0'
+    'keras-retinanet==0.5.0',
+    'pydload'
 ]
 
 # What packages are optional?
