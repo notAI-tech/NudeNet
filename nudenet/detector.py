@@ -1,4 +1,6 @@
+import os
 import keras
+import pydload
 from keras_retinanet import models
 from keras_retinanet.utils.image import read_image_bgr, preprocess_image, resize_image
 from keras_retinanet.utils.visualization import draw_box, draw_caption
@@ -14,14 +16,26 @@ class Detector():
         'BUTTOCKS',
         'F_BREAST',
         'F_GENITALIA',
-        'M_GENETALIA',
+        'M_GENITALIA',
         'M_BREAST',
     ]
     
-    def __init__(self, model_path):
+    def __init__(self):
         '''
-            model = Classifier('path_to_weights')
+            model = Detector()
         '''
+        url = 'https://github.com/bedapudi6788/NudeNet/releases/download/v0/detector_model'
+        home = os.path.expanduser("~")
+        model_folder = os.path.join(home, '.NudeNet/')
+        if not os.path.exists(model_folder):
+            os.mkdir(model_folder)
+        
+        model_path = os.path.join(model_folder, 'detector')
+
+        if not os.path.exists(model_path):
+            print('Downloading the checkpoint to', model_path)
+            pydload.dload(url, save_to_path=model_path, max_time=None)
+
         Detector.detection_model = models.load_model(model_path, backbone_name='resnet101')
     
     def detect(self, img_path, min_prob=0.6):

@@ -1,6 +1,7 @@
+import os
 import keras
+import pydload
 import numpy as np
-
 
 def load_images(image_paths, image_size):
     '''
@@ -36,10 +37,22 @@ class Classifier():
     '''
     nsfw_model = None
 
-    def __init__(self, model_path):
+    def __init__(self):
         '''
-            model = Classifier('path_to_weights')
+            model = Classifier()
         '''
+        url = 'https://github.com/bedapudi6788/NudeNet/releases/download/v0/classifier_model'
+        home = os.path.expanduser("~")
+        model_folder = os.path.join(home, '.NudeNet/')
+        if not os.path.exists(model_folder):
+            os.mkdir(model_folder)
+        
+        model_path = os.path.join(model_folder, 'classifier')
+
+        if not os.path.exists(model_path):
+            print('Downloading the checkpoint to', model_path)
+            pydload.dload(url, save_to_path=model_path, max_time=None)
+
         Classifier.nsfw_model = keras.models.load_model(model_path)
 
 
