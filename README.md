@@ -1,4 +1,4 @@
-# NudeNet: An ensemble of Neural Nets for Nudity Detection and Censoring
+# NudeNet: Neural Nets for Nudity Detection and Censoring
 
 
 
