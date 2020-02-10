@@ -20,7 +20,7 @@ Classification scores on the data available at https://dataturks.com/projects/Mo
 
 # Classification Classes
 
-nude -> image contains nudity
+unsafe -> image contains nudity
 
 safe -> image doesn't contain nudity
 
