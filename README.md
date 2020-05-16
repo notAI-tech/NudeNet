@@ -1,14 +1,8 @@
 # NudeNet: Neural Nets for Nudity Detection and Censoring
 
-
+**NudeClassifier is available as a free to use API and as a self-hostable service via https://github.com/notAI-tech/fastDeploy**
 
 [![DOI](https://zenodo.org/badge/173154449.svg)](https://zenodo.org/badge/latestdoi/173154449)
-
-
-Demo of the classifier available at http://bpraneeth.com/projects/nudenet
-
-Code used to create the demo available at https://github.com/bedapudi6788/NudeNet/issues/16#issuecomment-522936659
-
 
 
 Uncensored version of the following image can be found at https://i.imgur.com/rga6845.jpg (NSFW)
