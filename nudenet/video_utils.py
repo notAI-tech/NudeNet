@@ -45,19 +45,24 @@ def is_similar_frame(f1, f2, resize_to=(64, 64), thresh=0.5, return_score=False)
 
 def get_interest_frames_from_video(video_path, frame_similarity_threshold=0.5, similarity_context_n_frames=3, skip_n_frames=0.5, output_frames_to_dir=None):
     important_frames = []
+    fps = 0
+    video_length = 0
 
     try:
         video = cv2.VideoCapture(video_path)
+        fps = video.get(cv2.CAP_PROP_FPS)
+        length = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+
         if skip_n_frames < 1:
-            fps = video.get(cv2.CAP_PROP_FPS)
             skip_n_frames = int(skip_n_frames * fps)
             logging.info(f'skip_n_frames: {skip_n_frames}')
 
         length = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
         for frame_i in range(length + 1):
-            if frame_i % skip_n_frames != 0:
-                continue
+            if skip_n_frames > 0:
+                if frame_i % skip_n_frames != 0:
+                    continue
 
             frame_i += 1
             read_flag, current_frame = video.read()
@@ -87,7 +92,7 @@ def get_interest_frames_from_video(video_path, frame_similarity_threshold=0.5, s
     except Exception as ex:
         logging.exception(ex, exc_info=True)
 
-    return important_frames
+    return [i[0] for i in important_frames], [i[1] for i in important_frames], fps, video_length
 
 
 if __name__ == '__main__':
