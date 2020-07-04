@@ -57,7 +57,7 @@ def get_interest_frames_from_video(video_path, frame_similarity_threshold=0.5, s
             skip_n_frames = int(skip_n_frames * fps)
             logging.info(f'skip_n_frames: {skip_n_frames}')
 
-        length = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+        video_length = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
         for frame_i in range(length + 1):
             if skip_n_frames > 0:
