@@ -43,7 +43,7 @@ def load_img(path, grayscale=False, color_mode='rgb', target_size=None,
     :return: A PIL Image instance.
     """
     if grayscale is True:
-        warnings.warn('grayscale is deprecated. Please use '
+        logging.warn('grayscale is deprecated. Please use '
                       'color_mode = "grayscale"')
         color_mode = 'grayscale'
     if pil_image is None:
@@ -103,7 +103,7 @@ def load_images(image_paths, image_size, image_names):
             loaded_images.append(image)
             loaded_image_paths.append(image_names[i])
         except Exception as ex:
-            print(i, img_path, ex)
+            logging.exception(f'Error reading {img_path} {ex}', exc_info=True)
     
     return np.asarray(loaded_images), loaded_image_paths
 
@@ -132,8 +132,38 @@ class Classifier():
 
         Classifier.nsfw_model = keras.models.load_model(model_path)
 
+    def classify_video(self, video_path=None, batch_size = 4, image_size = (256, 256), categories = ['unsafe', 'safe']):
+        frame_indices = None
+        frame_indices, frames, fps, video_length = get_interest_frames_from_video(video_path)
+        logging.debug(f'VIDEO_PATH: {video_path}, FPS: {fps}, Important frame indices: {frame_indices}, Video length: {video_length}')
 
-    def classify(self, image_paths = [], video_path=None, batch_size = 4, image_size = (256, 256), categories = ['unsafe', 'safe']):
+        frames, frame_names = load_images(frames, image_size, image_names=frame_indices)
+        
+        if not frame_names:
+            return {}
+
+        model_preds = Classifier.nsfw_model.predict(frames, batch_size = batch_size)
+        preds = np.argsort(model_preds, axis = 1).tolist()
+
+        probs = []
+        for i, single_preds in enumerate(preds):
+            single_probs = []
+            for j, pred in enumerate(single_preds):
+                single_probs.append(model_preds[i][pred])
+                preds[i][j] = categories[pred]
+            
+            probs.append(single_probs)
+        
+        return_preds = {'metadata': {'fps': fps, 'video_length': video_length, 'video_path': video_path}, 'preds': {}}
+
+        for i, frame_name in enumerate(frame_names):
+            return_preds['preds'][frame_name] = {}
+            for _ in range(len(preds[i])):
+                return_preds['preds'][frame_name][preds[i][_]] = probs[i][_]
+        
+        return return_preds
+
+    def classify(self, image_paths = [], batch_size = 4, image_size = (256, 256), categories = ['unsafe', 'safe']):
         '''
             inputs:
                 image_paths: list of image paths or can be a string too (for single image)
@@ -141,20 +171,10 @@ class Classifier():
                 image_size: size to which the image needs to be resized
                 categories: since the model predicts numbers, categories is the list of actual names of categories
         '''
-
-        frame_indices = None
         if isinstance(image_paths, str):
             image_paths = [image_paths]
 
-        if video_path:
-            frame_indices, image_paths, fps, video_length = get_interest_frames_from_video(video_path)
-            logging.debug(f'VIDEO_PATH: {video_path}, FPS: {fps}, Important frame indices: {frame_indices}, Video length: {video_length}')
-            image_names = [frame_i for frame_i in frame_indices]
-
-        else:
-            image_names = [p for p in image_paths]
-
-        loaded_images, loaded_image_paths = load_images(image_paths, image_size, image_names=image_names)
+        loaded_images, loaded_image_paths = load_images(image_paths, image_size, image_names=image_paths)
         
         if not loaded_image_paths:
             return {}
@@ -180,9 +200,6 @@ class Classifier():
             for _ in range(len(preds[i])):
                 images_preds[loaded_image_path][preds[i][_]] = probs[i][_]
 
-        if video_path:
-            images_preds['video_info'] = {'fps': fps, 'video_length': video_length}
-
         return images_preds
 
 
@@ -191,7 +208,7 @@ if __name__ == '__main__':
     weights_path = input().strip()
     if not weights_path: weights_path = "../nsfw.299x299.h5"
     
-    m = Classifier(weights_path)
+    m = Classifier()
 
     while 1:
         print('\n Enter single image path or multiple images seperated by || (2 pipes) \n')
