@@ -59,7 +59,7 @@ class Detector():
 
         Detector.detection_model = models.load_model(model_path, backbone_name='resnet101')
     
-    def detect_video(self, video_path=None, min_prob=0.6, batch_size=2):
+    def detect_video(self, video_path, min_prob=0.6, batch_size=2):
         frame_indices, frames, fps, video_length = get_interest_frames_from_video(video_path)
         logging.debug(f'VIDEO_PATH: {video_path}, FPS: {fps}, Important frame indices: {frame_indices}, Video length: {video_length}')
         frames = [read_image_bgr(frame) for frame in frames]
@@ -67,24 +67,30 @@ class Detector():
         frames = [resize_image(frame) for frame in frames]
         scale = frames[0][1]
         frames = [frame[0] for frame in frames]
-        all_results = {}
+        all_results = {'metadata': {'fps': fps, 'video_length': video_length, 'video_path': video_path}, 'preds': {}}
 
         for _ in progressbar(range(int(len(frames)/batch_size) + 1)):
             batch = frames[:batch_size]
             batch_indices = frame_indices[:batch_size]
             frames = frames[batch_size:]
             frame_indices = frame_indices[batch_size:]
-            if len(batch):
+            if batch_indices:
                 boxes, scores, labels = Detector.detection_model.predict_on_batch(np.asarray(batch))
                 boxes /= scale
                 for frame_index, frame_boxes, frame_scores, frame_labels in zip(frame_indices, boxes, scores, labels):
-                    if frame_index not in all_results:
-                        all_results[frame_index] = []
+                    if frame_index not in all_results['preds']:
+                        all_results['preds'][frame_index] = []
                     
                     for box, score, label in zip(frame_boxes, frame_scores, frame_labels):
                         if score < min_prob:
                             continue
                         box = box.astype(int).tolist()
+                        label = Detector.classes[label]
+
+                        all_results['preds'][frame_index].append({'box': box, 'score': score, 'label': label})
+        
+        return all_results
+
 
     def detect(self, img_path, min_prob=0.6):
         image = read_image_bgr(img_path)
