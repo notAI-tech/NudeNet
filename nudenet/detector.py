@@ -31,6 +31,8 @@ def read_image_bgr(path):
 
     return image[:, :, ::-1]
 
+def dummy(x):
+    return x
 
 FILE_URLS = {
     "default": {
@@ -78,7 +80,7 @@ class Detector:
             c.strip() for c in open(classes_path).readlines() if c.strip()
         ]
 
-    def detect_video(self, video_path, min_prob=0.6, batch_size=2):
+    def detect_video(self, video_path, min_prob=0.6, batch_size=2, show_progress=True):
         frame_indices, frames, fps, video_length = get_interest_frames_from_video(
             video_path
         )
@@ -99,7 +101,12 @@ class Detector:
             "preds": {},
         }
 
-        for _ in progressbar(range(int(len(frames) / batch_size) + 1)):
+        progress_func = progressbar
+
+        if not show_progress:
+            progress_func = dummy
+
+        for _ in progress_func(range(int(len(frames) / batch_size) + 1)):
             batch = frames[:batch_size]
             batch_indices = frame_indices[:batch_size]
             frames = frames[batch_size:]
