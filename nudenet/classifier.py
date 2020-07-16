@@ -140,8 +140,8 @@ class Classifier:
 
     def classify_video(
         self,
-        video_path=None,
-        batch_size=4,
+        video_path,
+        batch_size=2,
         image_size=(256, 256),
         categories=["unsafe", "safe"],
     ):

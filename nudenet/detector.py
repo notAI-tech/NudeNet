@@ -31,8 +31,10 @@ def read_image_bgr(path):
 
     return image[:, :, ::-1]
 
+
 def dummy(x):
     return x
+
 
 FILE_URLS = {
     "default": {
