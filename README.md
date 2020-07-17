@@ -99,3 +99,9 @@ detector.detect_video('path_to_video', batch_size=BATCH_SIZE, show_progress=BOOL
 
 ```
 
+# Notes:
+- detect_video and classify_video first identify the "unique" frames in a video and run predictions on them for significant performance improvement.
+- V1 of NudeDetector (available in master branch of this repo) was trained on 12000 images labelled by the good folks at cti-community.
+- V2 (current version) of NudeDetector is trained on entirely auto-generated (using classification heat maps and various other hybrid techniques) data. 
+- The entire data for the classifier is available at https://archive.org/details/NudeNet_classifier_dataset_v1
+- A part of the auto-generated data for Detector is available at ---
