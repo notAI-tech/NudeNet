@@ -53,6 +53,8 @@ def get_interest_frames_from_video(
     skip_n_frames=0.5,
     output_frames_to_dir=None,
 ):
+    skip_n_frames = float(os.getenv('SKIP_N_FRAMES', skip_n_frames))
+
     important_frames = []
     fps = 0
     video_length = 0
