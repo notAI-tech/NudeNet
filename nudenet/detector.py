@@ -56,8 +56,8 @@ class Detector:
         """
             model = Detector()
         """
-        checkpoint_url = FILE_URLS["default"]["checkpoint"]
-        classes_url = FILE_URLS["default"]["classes"]
+        checkpoint_url = FILE_URLS[model_name]["checkpoint"]
+        classes_url = FILE_URLS[model_name]["classes"]
 
         home = os.path.expanduser("~")
         model_folder = os.path.join(home, f".NudeNet/{model_name}")

@@ -141,7 +141,7 @@ class Classifier:
     def classify_video(
         self,
         video_path,
-        batch_size=2,
+        batch_size=4,
         image_size=(256, 256),
         categories=["unsafe", "safe"],
     ):
