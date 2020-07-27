@@ -75,10 +75,10 @@ class Detector:
             print("Downloading the classes list to", classes_path)
             pydload.dload(classes_url, save_to_path=classes_path, max_time=None)
 
-        Detector.detection_model = models.load_model(
+        self.detection_model = models.load_model(
             checkpoint_path, backbone_name="resnet50"
         )
-        Detector.classes = [
+        self.classes = [
             c.strip() for c in open(classes_path).readlines() if c.strip()
         ]
 
@@ -114,7 +114,7 @@ class Detector:
             frames = frames[batch_size:]
             frame_indices = frame_indices[batch_size:]
             if batch_indices:
-                boxes, scores, labels = Detector.detection_model.predict_on_batch(
+                boxes, scores, labels = self.detection_model.predict_on_batch(
                     np.asarray(batch)
                 )
                 boxes /= scale
@@ -130,7 +130,7 @@ class Detector:
                         if score < min_prob:
                             continue
                         box = box.astype(int).tolist()
-                        label = Detector.classes[label]
+                        label = self.classes[label]
 
                         all_results["preds"][frame_index].append(
                             {"box": box, "score": score, "label": label}
@@ -142,7 +142,7 @@ class Detector:
         image = read_image_bgr(img_path)
         image = preprocess_image(image)
         image, scale = resize_image(image)
-        boxes, scores, labels = Detector.detection_model.predict_on_batch(
+        boxes, scores, labels = self.detection_model.predict_on_batch(
             np.expand_dims(image, axis=0)
         )
         boxes /= scale
@@ -151,7 +151,7 @@ class Detector:
             if score < min_prob:
                 continue
             box = box.astype(int).tolist()
-            label = Detector.classes[label]
+            label = self.classes[label]
             processed_boxes.append({"box": box, "score": score, "label": label})
 
         return processed_boxes
@@ -164,7 +164,7 @@ class Detector:
             return
 
         image = cv2.imread(img_path)
-        boxes = Detector.detect(self, img_path)
+        boxes = self.detect(self, img_path)
 
         if parts_to_blur:
             boxes = [i["box"] for i in boxes if i["label"] in parts_to_blur]

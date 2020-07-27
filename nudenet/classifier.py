@@ -136,7 +136,7 @@ class Classifier:
             print("Downloading the checkpoint to", model_path)
             pydload.dload(url, save_to_path=model_path, max_time=None)
 
-        Classifier.nsfw_model = keras.models.load_model(model_path)
+        self.nsfw_model = keras.models.load_model(model_path)
 
     def classify_video(
         self,
@@ -158,7 +158,7 @@ class Classifier:
         if not frame_names:
             return {}
 
-        model_preds = Classifier.nsfw_model.predict(frames, batch_size=batch_size)
+        model_preds = self.nsfw_model.predict(frames, batch_size=batch_size)
         preds = np.argsort(model_preds, axis=1).tolist()
 
         probs = []
@@ -210,7 +210,7 @@ class Classifier:
         if not loaded_image_paths:
             return {}
 
-        model_preds = Classifier.nsfw_model.predict(
+        model_preds = self.nsfw_model.predict(
             loaded_images, batch_size=batch_size
         )
 
