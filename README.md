@@ -120,4 +120,4 @@ detector.detect_video('path_to_video', batch_size=BATCH_SIZE, show_progress=BOOL
 - V1 of NudeDetector (available in master branch of this repo) was trained on 12000 images labelled by the good folks at cti-community.
 - V2 (current version) of NudeDetector is trained on 160,000 entirely auto-labelled (using classification heat maps and various other hybrid techniques) images. 
 - The entire data for the classifier is available at https://archive.org/details/NudeNet_classifier_dataset_v1
-- A part of the auto-labelled data for Detector is available at ---
+- A part of the auto-labelled data (Images are from the classifier dataset above) used to train the base Detector is available at https://github.com/notAI-tech/NudeNet/releases/download/v0/DETECTOR_AUTO_GENERATED_DATA.zip
