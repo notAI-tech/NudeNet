@@ -25,7 +25,8 @@ REQUIRED = [
     'keras==2.2.4',
     'opencv-python',
     'keras-retinanet==0.5.1',
-    'pydload'
+    'pydload',
+    'scikit-image'
 ]
 
 # What packages are optional?
