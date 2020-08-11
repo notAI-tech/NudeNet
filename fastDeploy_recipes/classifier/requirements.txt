@@ -1,2 +1,2 @@
 keras==2.2.4
-NudeNet==1.1.0
+https://github.com/notAI-tech/NudeNet/archive/v2.zip
