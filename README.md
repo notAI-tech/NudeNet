@@ -42,7 +42,22 @@ Uncensored version of the following image can be found at https://i.imgur.com/rg
 |EXPOSED_GENITALIA_M |Exposed Genitalia; Male |
 |EXPOSED_BREAST_M |Exposed Breast; Male |
 
-# As self-hostable API
+# As self-hostable API service
+```bash
+# Classifier
+docker run -it -p8080:8080 notaitech/nudenet:classifier
+
+# Detector
+docker run -it -p8080:8080 notaitech/nudenet:classifier
+
+# See fastDeploy-file_client.py for running predictions via fastDeploy's REST endpoints 
+!wget https://raw.githubusercontent.com/notAI-tech/fastDeploy/master/cli/fastDeploy-file_client.py
+# Single input
+python fastDeploy-file_client.py --file PATH_TO_YOUR_IMAGE
+
+# Client side batching
+python fastDeploy-file_client.py --dir PATH_TO_FOLDER --ext jpg
+```
 
 
 # As Python module
