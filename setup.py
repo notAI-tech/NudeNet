@@ -18,13 +18,13 @@ URL = 'https://github.com/bedapudi6788/NudeNet'
 EMAIL = 'praneethbedapudi@gmail.com'
 AUTHOR = 'BEDAPUDI PRANEETH'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '1.1.0'
+VERSION = '2.0.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
     'keras==2.2.4',
-    'opencv-python==4.0.0.21',
-    'keras-retinanet==0.5.0',
+    'opencv-python-headless==4.3.0.38',
+    'keras-retinanet==0.5.1',
     'pydload'
 ]
 

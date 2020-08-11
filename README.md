@@ -48,6 +48,7 @@ Uncensored version of the following image can be found at https://i.imgur.com/rg
 # As Python module
 **Installation**:
 ```bash
+# Tested with tensorflow/ tensorflow-gpu == 1.14
 pip install --upgrade nudenet
 ```
 
