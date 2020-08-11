@@ -48,7 +48,7 @@ Uncensored version of the following image can be found at https://i.imgur.com/rg
 docker run -it -p8080:8080 notaitech/nudenet:classifier
 
 # Detector
-docker run -it -p8080:8080 notaitech/nudenet:classifier
+docker run -it -p8080:8080 notaitech/nudenet:detector
 
 # See fastDeploy-file_client.py for running predictions via fastDeploy's REST endpoints 
 !wget https://raw.githubusercontent.com/notAI-tech/fastDeploy/master/cli/fastDeploy-file_client.py
