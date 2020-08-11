@@ -8,6 +8,8 @@ from skimage import metrics as skimage_metrics
 
 
 def is_similar_frame(f1, f2, resize_to=(64, 64), thresh=0.5, return_score=False):
+    thresh = float(os.getenv('FRAME_SIMILARITY_THRESH', thresh))
+
     if f1 is None or f2 is None:
         return False
 
@@ -71,15 +73,16 @@ def get_interest_frames_from_video(
         video_length = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
         for frame_i in range(length + 1):
+            read_flag, current_frame = video.read()
+
+            if not read_flag:
+                break
+
             if skip_n_frames > 0:
                 if frame_i % skip_n_frames != 0:
                     continue
 
             frame_i += 1
-            read_flag, current_frame = video.read()
-
-            if not read_flag:
-                break
 
             found_similar = False
             for context_frame_i, context_frame in reversed(
