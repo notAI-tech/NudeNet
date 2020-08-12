@@ -164,7 +164,7 @@ class Detector:
             return
 
         image = cv2.imread(img_path)
-        boxes = self.detect(self, img_path)
+        boxes = self.detect(img_path)
 
         if parts_to_blur:
             boxes = [i["box"] for i in boxes if i["label"] in parts_to_blur]
