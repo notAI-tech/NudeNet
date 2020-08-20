@@ -51,7 +51,7 @@ docker run -it -p8080:8080 notaitech/nudenet:classifier
 docker run -it -p8080:8080 notaitech/nudenet:detector
 
 # See fastDeploy-file_client.py for running predictions via fastDeploy's REST endpoints 
-!wget https://raw.githubusercontent.com/notAI-tech/fastDeploy/master/cli/fastDeploy-file_client.py
+wget https://raw.githubusercontent.com/notAI-tech/fastDeploy/master/cli/fastDeploy-file_client.py
 # Single input
 python fastDeploy-file_client.py --file PATH_TO_YOUR_IMAGE
 
