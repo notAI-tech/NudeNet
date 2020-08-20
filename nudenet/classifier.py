@@ -4,7 +4,7 @@ import keras
 import pydload
 import logging
 import numpy as np
-from .video_utils import get_interest_frames_from_video
+# from .video_utils import get_interest_frames_from_video
 
 from PIL import Image as pil_image
 
@@ -228,6 +228,9 @@ class Classifier:
         images_preds = {}
 
         for i, loaded_image_path in enumerate(loaded_image_paths):
+            if not isinstance(loaded_image_path, str):
+                loaded_image_path = i
+
             images_preds[loaded_image_path] = {}
             for _ in range(len(preds[i])):
                 images_preds[loaded_image_path][preds[i][_]] = probs[i][_]
