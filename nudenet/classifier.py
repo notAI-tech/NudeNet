@@ -4,7 +4,7 @@ import keras
 import pydload
 import logging
 import numpy as np
-# from .video_utils import get_interest_frames_from_video
+from .video_utils import get_interest_frames_from_video
 
 from PIL import Image as pil_image
 
