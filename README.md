@@ -23,7 +23,7 @@ Uncensored version of the following image can be found at https://i.imgur.com/rg
 |EXPOSED_BUTTOCKS | Exposed Buttocks; Any gender |
 |FACE_F | Female Face|
 |FACE_M | Male Face|
-|COVERED_FEET |Provocative, but covered Feet; Any gender |
+|COVERED_FEET |Covered Feet; Any gender |
 |EXPOSED_FEET | Exposed Feet; Any gender|
 |COVERED_BREAST_F | Provocative, but covered Breast; Female |
 |EXPOSED_BREAST_F | Exposed Breast; Female |
