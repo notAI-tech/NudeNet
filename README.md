@@ -92,6 +92,28 @@ classifier.classify_video('path_to_video', batch_size=BATCH_SIZE)
 
 ```
 
+Thanks to [Johnny Urosevic](https://github.com/JohnnyUrosevic), NudeClassifier is also available in tflite.
+
+**TFLite Classifier Usage**:
+```python
+# Import module
+from nudenet import NudeClassifierLite
+
+# initialize classifier (downloads the checkpoint file automatically the first time)
+classifier_lite = NudeClassifierLite()
+
+# Classify single image
+classifier_lite.classify('path_to_image_1')
+# Returns {'path_to_image_1': {'safe': PROBABILITY, 'unsafe': PROBABILITY}}
+# Classify multiple images (batch prediction)
+# batch_size is optional; defaults to 4
+classifier_lite.classify(['path_to_image_1', 'path_to_image_2'])
+# Returns {'path_to_image_1': {'safe': PROBABILITY, 'unsafe': PROBABILITY},
+#          'path_to_image_2': {'safe': PROBABILITY, 'unsafe': PROBABILITY}}
+
+```
+
+
 **Detector Usage**:
 ```python
 # Import module
