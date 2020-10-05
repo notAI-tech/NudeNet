@@ -18,7 +18,7 @@ URL = 'https://github.com/bedapudi6788/NudeNet'
 EMAIL = 'praneethbedapudi@gmail.com'
 AUTHOR = 'BEDAPUDI PRANEETH'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '2.0.3'
+VERSION = '2.0.4'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
