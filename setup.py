@@ -23,8 +23,7 @@ VERSION = '2.0.4'
 # What packages are required for this module to be executed?
 REQUIRED = [
     'keras==2.2.4',
-    'opencv-python',
-    'keras-retinanet==0.5.1',
+    'opencv-python-headless',
     'pydload',
     'scikit-image'
 ]

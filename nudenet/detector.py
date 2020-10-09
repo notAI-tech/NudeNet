@@ -1,36 +1,14 @@
 import os
-import keras
-import pydload
-from keras_retinanet import models
-from keras_retinanet.utils.image import preprocess_image, resize_image
-from keras_retinanet.utils.visualization import draw_box, draw_caption
-from keras_retinanet.utils.colors import label_color
-
-from .video_utils import get_interest_frames_from_video
-
 import cv2
-import numpy as np
-
+import pydload
+import tarfile
 import logging
-
-from PIL import Image as pil_image
-
+import numpy as np
+import tensorflow as tf
 from progressbar import progressbar
 
-
-def read_image_bgr(path):
-    """ Read an image in BGR format.
-    Args
-        path: Path to the image.
-    """
-    if isinstance(path, str):
-        image = np.ascontiguousarray(pil_image.open(path).convert("RGB"))
-    else:
-        path = cv2.cvtColor(path, cv2.COLOR_BGR2RGB)
-        image = np.ascontiguousarray(pil_image.fromarray(path))
-
-    return image[:, :, ::-1]
-
+from .detector_utils import preprocess_image
+from .video_utils import get_interest_frames_from_video
 
 def dummy(x):
     return x
@@ -38,11 +16,11 @@ def dummy(x):
 
 FILE_URLS = {
     "default": {
-        "checkpoint": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_default_checkpoint",
+        "checkpoint": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_default_checkpoint_tf.tar",
         "classes": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_default_classes",
     },
     "base": {
-        "checkpoint": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_base_checkpoint",
+        "checkpoint": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_base_checkpoint_tf.tar",
         "classes": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_base_classes",
     },
 }
@@ -64,34 +42,42 @@ class Detector:
         if not os.path.exists(model_folder):
             os.makedirs(model_folder)
 
-        checkpoint_path = os.path.join(model_folder, "checkpoint")
+        checkpoint_tar_file_name = os.path.basename(checkpoint_url)
+        checkpoint_name = checkpoint_tar_file_name.replace('.tar', '')
+
+        checkpoint_path = os.path.join(model_folder, checkpoint_name)
+        checkpoint_tar_file_path = os.path.join(model_folder, checkpoint_tar_file_name)
         classes_path = os.path.join(model_folder, "classes")
 
         if not os.path.exists(checkpoint_path):
             print("Downloading the checkpoint to", checkpoint_path)
-            pydload.dload(checkpoint_url, save_to_path=checkpoint_path, max_time=None)
+            pydload.dload(checkpoint_url, save_to_path=checkpoint_tar_file_path, max_time=None)
+            with tarfile.open(checkpoint_tar_file_path) as f: f.extractall(path=os.path.dirname(checkpoint_tar_file_path))
+            os.remove(checkpoint_tar_file_path)
 
         if not os.path.exists(classes_path):
             print("Downloading the classes list to", classes_path)
             pydload.dload(classes_url, save_to_path=classes_path, max_time=None)
 
-        self.detection_model = models.load_model(
-            checkpoint_path, backbone_name="resnet50"
-        )
+        self.detection_model = tf.contrib.predictor.from_saved_model(
+                        checkpoint_path, signature_def_key="predict"
+                    )
         self.classes = [
             c.strip() for c in open(classes_path).readlines() if c.strip()
         ]
 
-    def detect_video(self, video_path, min_prob=0.6, batch_size=2, show_progress=True):
+    def detect_video(self, video_path, mode="default", min_prob=0.6, batch_size=2, show_progress=True):
         frame_indices, frames, fps, video_length = get_interest_frames_from_video(
             video_path
         )
         logging.debug(
             f"VIDEO_PATH: {video_path}, FPS: {fps}, Important frame indices: {frame_indices}, Video length: {video_length}"
         )
-        frames = [read_image_bgr(frame) for frame in frames]
-        frames = [preprocess_image(frame) for frame in frames]
-        frames = [resize_image(frame) for frame in frames]
+        if mode == 'fast':
+            frames = [preprocess_image(frame, min_side=480, max_side=800) for frame in frames]
+        else:
+            frames = [preprocess_image(frame) for frame in frames]
+
         scale = frames[0][1]
         frames = [frame[0] for frame in frames]
         all_results = {
@@ -114,9 +100,10 @@ class Detector:
             frames = frames[batch_size:]
             frame_indices = frame_indices[batch_size:]
             if batch_indices:
-                boxes, scores, labels = self.detection_model.predict_on_batch(
-                    np.asarray(batch)
+                pred = self.detection_model(
+                    {"images": np.asarray(batch)}
                 )
+                boxes, scores, labels = pred["output1"], pred["output2"], pred["output3"]
                 boxes /= scale
                 for frame_index, frame_boxes, frame_scores, frame_labels in zip(
                     frame_indices, boxes, scores, labels
@@ -133,18 +120,23 @@ class Detector:
                         label = self.classes[label]
 
                         all_results["preds"][frame_index].append(
-                            {"box": box, "score": score, "label": label}
+                            {"box": [int(c) for c in box], "score": float(score), "label": label}
                         )
 
         return all_results
 
-    def detect(self, img_path, min_prob=0.6):
-        image = read_image_bgr(img_path)
-        image = preprocess_image(image)
-        image, scale = resize_image(image)
-        boxes, scores, labels = self.detection_model.predict_on_batch(
-            np.expand_dims(image, axis=0)
-        )
+    def detect(self, img_path, mode="default", min_prob=None):
+        if mode == "fast":
+            image, scale = preprocess_image(img_path, min_side=480, max_side=800)
+            if not min_prob: min_prob = 0.5
+        else:
+            image, scale = preprocess_image(img_path)
+            if not min_prob: min_prob = 0.6
+
+        pred = self.detection_model(
+                    {"images": np.expand_dims(image, axis=0)}
+                )
+        boxes, scores, labels = pred["output1"], pred["output2"], pred["output3"]
         boxes /= scale
         processed_boxes = []
         for box, score, label in zip(boxes[0], scores[0], labels[0]):
