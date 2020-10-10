@@ -1,13 +1,14 @@
 import os
 import cv2
-import keras
+import tarfile
 import pydload
 import logging
 import numpy as np
 from .video_utils import get_interest_frames_from_video
 from .image_utils import load_images
-
 from PIL import Image as pil_image
+
+import tensorflow as tf
 
 class Classifier:
     """
@@ -21,19 +22,23 @@ class Classifier:
         """
             model = Classifier()
         """
-        url = "https://github.com/bedapudi6788/NudeNet/releases/download/v0/classifier_model"
+        url = "https://github.com/notAI-tech/NudeNet/releases/download/v0/classifier_model_tf.tar"
         home = os.path.expanduser("~")
         model_folder = os.path.join(home, ".NudeNet/")
         if not os.path.exists(model_folder):
             os.mkdir(model_folder)
 
-        model_path = os.path.join(model_folder, "classifier")
+        model_tar_file_name = os.path.basename(url)
+        model_tar_file_path = os.path.join(model_folder, model_tar_file_name)
+        model_path = model_tar_file_path.replace('.tar', '')
 
         if not os.path.exists(model_path):
             print("Downloading the checkpoint to", model_path)
-            pydload.dload(url, save_to_path=model_path, max_time=None)
+            pydload.dload(url, save_to_path=model_tar_file_path, max_time=None)
+            with tarfile.open(model_tar_file_path) as f: f.extractall(path=os.path.dirname(model_tar_file_path))
+            os.remove(model_tar_file_path)
 
-        self.nsfw_model = keras.models.load_model(model_path)
+        self.nsfw_model = tf.contrib.predictor.from_saved_model(model_path, signature_def_key="predict")
 
     def classify_video(
         self,
@@ -55,14 +60,19 @@ class Classifier:
         if not frame_names:
             return {}
 
-        model_preds = self.nsfw_model.predict(frames, batch_size=batch_size)
-        preds = np.argsort(model_preds, axis=1).tolist()
+        preds = []
+        model_preds = []
+        while len(frames):
+            _model_preds = self.nsfw_model({'images': frames[:batch_size]})['output']
+            model_preds.append(_model_preds)
+            preds += np.argsort(_model_preds, axis=1).tolist()
+            frames = frames[batch_size:]
 
         probs = []
         for i, single_preds in enumerate(preds):
             single_probs = []
             for j, pred in enumerate(single_preds):
-                single_probs.append(model_preds[i][pred])
+                single_probs.append(model_preds[int(i/batch_size)][int(i%batch_size)][pred])
                 preds[i][j] = categories[pred]
 
             probs.append(single_probs)
@@ -107,17 +117,19 @@ class Classifier:
         if not loaded_image_paths:
             return {}
 
-        model_preds = self.nsfw_model.predict(
-            loaded_images, batch_size=batch_size
-        )
-
-        preds = np.argsort(model_preds, axis=1).tolist()
+        preds = []
+        model_preds = []
+        while len(loaded_images):
+            _model_preds = self.nsfw_model({'images': loaded_images[:batch_size]})['output']
+            model_preds.append(_model_preds)
+            preds += np.argsort(_model_preds, axis=1).tolist()
+            loaded_images = loaded_images[batch_size:]
 
         probs = []
         for i, single_preds in enumerate(preds):
             single_probs = []
             for j, pred in enumerate(single_preds):
-                single_probs.append(model_preds[i][pred])
+                single_probs.append(model_preds[int(i/batch_size)][int(i%batch_size)][pred])
                 preds[i][j] = categories[pred]
 
             probs.append(single_probs)
@@ -136,13 +148,6 @@ class Classifier:
 
 
 if __name__ == "__main__":
-    print(
-        '\n Enter path for the keras weights, leave empty to use "./nsfw.299x299.h5" \n'
-    )
-    weights_path = input().strip()
-    if not weights_path:
-        weights_path = "../nsfw.299x299.h5"
-
     m = Classifier()
 
     while 1:
