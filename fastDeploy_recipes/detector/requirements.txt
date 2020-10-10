@@ -1,2 +1,1 @@
-keras==2.2.4
-https://github.com/notAI-tech/NudeNet/archive/v2.zip
+nudenet==2.0.6
