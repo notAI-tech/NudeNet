@@ -63,7 +63,7 @@ python fastDeploy-file_client.py --dir PATH_TO_FOLDER --ext jpg
 # As Python module
 **Installation**:
 ```bash
-# Tested with tensorflow/ tensorflow-gpu == 1.14
+# tensorflow/ tensorflow-gpu <= 1.15.4 is required
 pip install --upgrade nudenet
 ```
 
