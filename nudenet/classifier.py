@@ -10,6 +10,7 @@ from PIL import Image as pil_image
 
 import tensorflow as tf
 
+
 class Classifier:
     """
         Class for loading model and running predictions.
@@ -30,15 +31,18 @@ class Classifier:
 
         model_tar_file_name = os.path.basename(url)
         model_tar_file_path = os.path.join(model_folder, model_tar_file_name)
-        model_path = model_tar_file_path.replace('.tar', '')
+        model_path = model_tar_file_path.replace(".tar", "")
 
         if not os.path.exists(model_path):
             print("Downloading the checkpoint to", model_path)
             pydload.dload(url, save_to_path=model_tar_file_path, max_time=None)
-            with tarfile.open(model_tar_file_path) as f: f.extractall(path=os.path.dirname(model_tar_file_path))
+            with tarfile.open(model_tar_file_path) as f:
+                f.extractall(path=os.path.dirname(model_tar_file_path))
             os.remove(model_tar_file_path)
 
-        self.nsfw_model = tf.contrib.predictor.from_saved_model(model_path, signature_def_key="predict")
+        self.nsfw_model = tf.contrib.predictor.from_saved_model(
+            model_path, signature_def_key="predict"
+        )
 
     def classify_video(
         self,
@@ -63,7 +67,7 @@ class Classifier:
         preds = []
         model_preds = []
         while len(frames):
-            _model_preds = self.nsfw_model({'images': frames[:batch_size]})['output']
+            _model_preds = self.nsfw_model({"images": frames[:batch_size]})["output"]
             model_preds.append(_model_preds)
             preds += np.argsort(_model_preds, axis=1).tolist()
             frames = frames[batch_size:]
@@ -72,7 +76,9 @@ class Classifier:
         for i, single_preds in enumerate(preds):
             single_probs = []
             for j, pred in enumerate(single_preds):
-                single_probs.append(model_preds[int(i/batch_size)][int(i%batch_size)][pred])
+                single_probs.append(
+                    model_preds[int(i / batch_size)][int(i % batch_size)][pred]
+                )
                 preds[i][j] = categories[pred]
 
             probs.append(single_probs)
@@ -120,7 +126,9 @@ class Classifier:
         preds = []
         model_preds = []
         while len(loaded_images):
-            _model_preds = self.nsfw_model({'images': loaded_images[:batch_size]})['output']
+            _model_preds = self.nsfw_model({"images": loaded_images[:batch_size]})[
+                "output"
+            ]
             model_preds.append(_model_preds)
             preds += np.argsort(_model_preds, axis=1).tolist()
             loaded_images = loaded_images[batch_size:]
@@ -129,7 +137,9 @@ class Classifier:
         for i, single_preds in enumerate(preds):
             single_probs = []
             for j, pred in enumerate(single_preds):
-                single_probs.append(model_preds[int(i/batch_size)][int(i%batch_size)][pred])
+                single_probs.append(
+                    model_preds[int(i / batch_size)][int(i % batch_size)][pred]
+                )
                 preds[i][j] = categories[pred]
 
             probs.append(single_probs)

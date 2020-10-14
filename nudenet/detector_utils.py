@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
+
 def read_image_bgr(path):
     """ Read an image in BGR format.
     Args
@@ -15,6 +16,7 @@ def read_image_bgr(path):
         image = np.ascontiguousarray(Image.fromarray(path))
 
     return image[:, :, ::-1]
+
 
 def _preprocess_image(x, mode="caffe"):
     x = x.astype(np.float32)
@@ -51,12 +53,9 @@ def resize_image(img, min_side=800, max_side=1333):
 
 
 def preprocess_image(
-    image_path,
-    min_side=800,
-    max_side=1333,
+    image_path, min_side=800, max_side=1333,
 ):
     image = read_image_bgr(image_path)
     image = _preprocess_image(image)
     image, scale = resize_image(image, min_side=min_side, max_side=max_side)
     return image, scale
-

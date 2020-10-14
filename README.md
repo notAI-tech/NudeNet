@@ -125,7 +125,7 @@ detector = NudeDetector() # detector = NudeDetector('base') for the "base" versi
 # Detect single image
 detector.detect('path_to_image')
 # fast mode is ~3x faster compared to default mode with slightly lower accuracy.
-detector.detect('path_to_image', mode='fast)
+detector.detect('path_to_image', mode='fast')
 # Returns [{'box': LIST_OF_COORDINATES, 'score': PROBABILITY, 'label': LABEL}, ...]
 
 # Detect video

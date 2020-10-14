@@ -2,7 +2,7 @@ import os
 import base64
 from nudenet import NudeDetector
 
-detector = NudeDetector(os.getenv('MODEL_NAME', 'default'))
+detector = NudeDetector(os.getenv("MODEL_NAME", "default"))
 
 
 """

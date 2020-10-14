@@ -10,6 +10,7 @@ from progressbar import progressbar
 from .detector_utils import preprocess_image
 from .video_utils import get_interest_frames_from_video
 
+
 def dummy(x):
     return x
 
@@ -43,7 +44,7 @@ class Detector:
             os.makedirs(model_folder)
 
         checkpoint_tar_file_name = os.path.basename(checkpoint_url)
-        checkpoint_name = checkpoint_tar_file_name.replace('.tar', '')
+        checkpoint_name = checkpoint_tar_file_name.replace(".tar", "")
 
         checkpoint_path = os.path.join(model_folder, checkpoint_name)
         checkpoint_tar_file_path = os.path.join(model_folder, checkpoint_tar_file_name)
@@ -51,8 +52,11 @@ class Detector:
 
         if not os.path.exists(checkpoint_path):
             print("Downloading the checkpoint to", checkpoint_path)
-            pydload.dload(checkpoint_url, save_to_path=checkpoint_tar_file_path, max_time=None)
-            with tarfile.open(checkpoint_tar_file_path) as f: f.extractall(path=os.path.dirname(checkpoint_tar_file_path))
+            pydload.dload(
+                checkpoint_url, save_to_path=checkpoint_tar_file_path, max_time=None
+            )
+            with tarfile.open(checkpoint_tar_file_path) as f:
+                f.extractall(path=os.path.dirname(checkpoint_tar_file_path))
             os.remove(checkpoint_tar_file_path)
 
         if not os.path.exists(classes_path):
@@ -60,21 +64,23 @@ class Detector:
             pydload.dload(classes_url, save_to_path=classes_path, max_time=None)
 
         self.detection_model = tf.contrib.predictor.from_saved_model(
-                        checkpoint_path, signature_def_key="predict"
-                    )
-        self.classes = [
-            c.strip() for c in open(classes_path).readlines() if c.strip()
-        ]
+            checkpoint_path, signature_def_key="predict"
+        )
+        self.classes = [c.strip() for c in open(classes_path).readlines() if c.strip()]
 
-    def detect_video(self, video_path, mode="default", min_prob=0.6, batch_size=2, show_progress=True):
+    def detect_video(
+        self, video_path, mode="default", min_prob=0.6, batch_size=2, show_progress=True
+    ):
         frame_indices, frames, fps, video_length = get_interest_frames_from_video(
             video_path
         )
         logging.debug(
             f"VIDEO_PATH: {video_path}, FPS: {fps}, Important frame indices: {frame_indices}, Video length: {video_length}"
         )
-        if mode == 'fast':
-            frames = [preprocess_image(frame, min_side=480, max_side=800) for frame in frames]
+        if mode == "fast":
+            frames = [
+                preprocess_image(frame, min_side=480, max_side=800) for frame in frames
+            ]
         else:
             frames = [preprocess_image(frame) for frame in frames]
 
@@ -100,10 +106,12 @@ class Detector:
             frames = frames[batch_size:]
             frame_indices = frame_indices[batch_size:]
             if batch_indices:
-                pred = self.detection_model(
-                    {"images": np.asarray(batch)}
+                pred = self.detection_model({"images": np.asarray(batch)})
+                boxes, scores, labels = (
+                    pred["output1"],
+                    pred["output2"],
+                    pred["output3"],
                 )
-                boxes, scores, labels = pred["output1"], pred["output2"], pred["output3"]
                 boxes /= scale
                 for frame_index, frame_boxes, frame_scores, frame_labels in zip(
                     frame_indices, boxes, scores, labels
@@ -120,7 +128,11 @@ class Detector:
                         label = self.classes[label]
 
                         all_results["preds"][frame_index].append(
-                            {"box": [int(c) for c in box], "score": float(score), "label": label}
+                            {
+                                "box": [int(c) for c in box],
+                                "score": float(score),
+                                "label": label,
+                            }
                         )
 
         return all_results
@@ -128,14 +140,14 @@ class Detector:
     def detect(self, img_path, mode="default", min_prob=None):
         if mode == "fast":
             image, scale = preprocess_image(img_path, min_side=480, max_side=800)
-            if not min_prob: min_prob = 0.5
+            if not min_prob:
+                min_prob = 0.5
         else:
             image, scale = preprocess_image(img_path)
-            if not min_prob: min_prob = 0.6
+            if not min_prob:
+                min_prob = 0.6
 
-        pred = self.detection_model(
-                    {"images": np.expand_dims(image, axis=0)}
-                )
+        pred = self.detection_model({"images": np.expand_dims(image, axis=0)})
         boxes, scores, labels = pred["output1"], pred["output2"], pred["output3"]
         boxes /= scale
         processed_boxes = []
