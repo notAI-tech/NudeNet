@@ -59,6 +59,8 @@ python fastDeploy-file_client.py --file PATH_TO_YOUR_IMAGE
 python fastDeploy-file_client.py --dir PATH_TO_FOLDER --ext jpg
 ```
 
+**Note: golang example https://github.com/notAI-tech/NudeNet/issues/63#issuecomment-729555360**, thanks to [Preetham Kamidi](https://github.com/preetham)
+
 
 # As Python module
 **Installation**:
