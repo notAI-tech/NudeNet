@@ -115,6 +115,7 @@ classifier_lite.classify(['path_to_image_1', 'path_to_image_2'])
 
 ```
 
+Using the tflite classifier from flutter: **https://github.com/ndaysinaiK/nude-test** 
 
 **Detector Usage**:
 ```python
