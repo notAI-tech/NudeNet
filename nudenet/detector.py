@@ -1,10 +1,9 @@
 import os
 import cv2
 import pydload
-import tarfile
 import logging
 import numpy as np
-import tensorflow as tf
+import onnxruntime
 from progressbar import progressbar
 
 from .detector_utils import preprocess_image
@@ -17,11 +16,11 @@ def dummy(x):
 
 FILE_URLS = {
     "default": {
-        "checkpoint": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_default_checkpoint_tf.tar",
+        "checkpoint": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_default_checkpoint.onnx",
         "classes": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_default_classes",
     },
     "base": {
-        "checkpoint": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_base_checkpoint_tf.tar",
+        "checkpoint": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_base_checkpoint.onnx",
         "classes": "https://github.com/notAI-tech/NudeNet/releases/download/v0/detector_v2_base_classes",
     },
 }
@@ -33,39 +32,30 @@ class Detector:
 
     def __init__(self, model_name="default"):
         """
-            model = Detector()
+        model = Detector()
         """
         checkpoint_url = FILE_URLS[model_name]["checkpoint"]
         classes_url = FILE_URLS[model_name]["classes"]
 
         home = os.path.expanduser("~")
-        model_folder = os.path.join(home, f".NudeNet/{model_name}")
+        model_folder = os.path.join(home, f".NudeNet/")
         if not os.path.exists(model_folder):
             os.makedirs(model_folder)
 
-        checkpoint_tar_file_name = os.path.basename(checkpoint_url)
-        checkpoint_name = checkpoint_tar_file_name.replace(".tar", "")
-
+        checkpoint_name = os.path.basename(checkpoint_url)
         checkpoint_path = os.path.join(model_folder, checkpoint_name)
-        checkpoint_tar_file_path = os.path.join(model_folder, checkpoint_tar_file_name)
         classes_path = os.path.join(model_folder, "classes")
 
         if not os.path.exists(checkpoint_path):
             print("Downloading the checkpoint to", checkpoint_path)
-            pydload.dload(
-                checkpoint_url, save_to_path=checkpoint_tar_file_path, max_time=None
-            )
-            with tarfile.open(checkpoint_tar_file_path) as f:
-                f.extractall(path=os.path.dirname(checkpoint_tar_file_path))
-            os.remove(checkpoint_tar_file_path)
+            pydload.dload(checkpoint_url, save_to_path=checkpoint_path, max_time=None)
 
         if not os.path.exists(classes_path):
             print("Downloading the classes list to", classes_path)
             pydload.dload(classes_url, save_to_path=classes_path, max_time=None)
 
-        self.detection_model = tf.contrib.predictor.from_saved_model(
-            checkpoint_path, signature_def_key="predict"
-        )
+        self.detection_model = onnxruntime.InferenceSession(checkpoint_path)
+
         self.classes = [c.strip() for c in open(classes_path).readlines() if c.strip()]
 
     def detect_video(
@@ -106,12 +96,15 @@ class Detector:
             frames = frames[batch_size:]
             frame_indices = frame_indices[batch_size:]
             if batch_indices:
-                pred = self.detection_model({"images": np.asarray(batch)})
-                boxes, scores, labels = (
-                    pred["output1"],
-                    pred["output2"],
-                    pred["output3"],
+                outputs = self.detection_model.run(
+                    [s_i.name for s_i in self.detection_model.get_outputs()],
+                    {self.detection_model.get_inputs()[0].name: np.asarray(batch)},
                 )
+
+                labels = [op for op in outputs if op.dtype == "int32"][0]
+                scores = [op for op in outputs if isinstance(op[0][0], np.float32)][0]
+                boxes = [op for op in outputs if isinstance(op[0][0], np.ndarray)][0]
+
                 boxes /= scale
                 for frame_index, frame_boxes, frame_scores, frame_labels in zip(
                     frame_indices, boxes, scores, labels
@@ -147,8 +140,15 @@ class Detector:
             if not min_prob:
                 min_prob = 0.6
 
-        pred = self.detection_model({"images": np.expand_dims(image, axis=0)})
-        boxes, scores, labels = pred["output1"], pred["output2"], pred["output3"]
+        outputs = self.detection_model.run(
+            [s_i.name for s_i in self.detection_model.get_outputs()],
+            {self.detection_model.get_inputs()[0].name: np.expand_dims(image, axis=0)},
+        )
+
+        labels = [op for op in outputs if op.dtype == "int32"][0]
+        scores = [op for op in outputs if isinstance(op[0][0], np.float32)][0]
+        boxes = [op for op in outputs if isinstance(op[0][0], np.ndarray)][0]
+
         boxes /= scale
         processed_boxes = []
         for box, score, label in zip(boxes[0], scores[0], labels[0]):
