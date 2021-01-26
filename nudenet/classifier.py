@@ -4,45 +4,37 @@ import tarfile
 import pydload
 import logging
 import numpy as np
+import onnxruntime
 from .video_utils import get_interest_frames_from_video
 from .image_utils import load_images
 from PIL import Image as pil_image
 
-import tensorflow as tf
-
 
 class Classifier:
     """
-        Class for loading model and running predictions.
-        For example on how to use take a look the if __name__ == '__main__' part.
+    Class for loading model and running predictions.
+    For example on how to use take a look the if __name__ == '__main__' part.
     """
 
     nsfw_model = None
 
     def __init__(self):
         """
-            model = Classifier()
+        model = Classifier()
         """
-        url = "https://github.com/notAI-tech/NudeNet/releases/download/v0/classifier_model_tf.tar"
+        url = "https://github.com/notAI-tech/NudeNet/releases/download/v0/classifier_model.onnx"
         home = os.path.expanduser("~")
         model_folder = os.path.join(home, ".NudeNet/")
         if not os.path.exists(model_folder):
             os.mkdir(model_folder)
 
-        model_tar_file_name = os.path.basename(url)
-        model_tar_file_path = os.path.join(model_folder, model_tar_file_name)
-        model_path = model_tar_file_path.replace(".tar", "")
+        model_path = os.path.join(model_folder, os.path.basename(url))
 
         if not os.path.exists(model_path):
             print("Downloading the checkpoint to", model_path)
-            pydload.dload(url, save_to_path=model_tar_file_path, max_time=None)
-            with tarfile.open(model_tar_file_path) as f:
-                f.extractall(path=os.path.dirname(model_tar_file_path))
-            os.remove(model_tar_file_path)
+            pydload.dload(url, save_to_path=model_path, max_time=None)
 
-        self.nsfw_model = tf.contrib.predictor.from_saved_model(
-            model_path, signature_def_key="predict"
-        )
+        self.nsfw_model = onnxruntime.InferenceSession(model_path)
 
     def classify_video(
         self,
@@ -67,7 +59,10 @@ class Classifier:
         preds = []
         model_preds = []
         while len(frames):
-            _model_preds = self.nsfw_model({"images": frames[:batch_size]})["output"]
+            _model_preds = self.nsfw_model.run(
+                [self.nsfw_model.get_outputs()[0].name],
+                {self.nsfw_model.get_inputs()[0].name: frames[:batch_size]},
+            )[0]
             model_preds.append(_model_preds)
             preds += np.argsort(_model_preds, axis=1).tolist()
             frames = frames[batch_size:]
@@ -107,11 +102,11 @@ class Classifier:
         categories=["unsafe", "safe"],
     ):
         """
-            inputs:
-                image_paths: list of image paths or can be a string too (for single image)
-                batch_size: batch_size for running predictions
-                image_size: size to which the image needs to be resized
-                categories: since the model predicts numbers, categories is the list of actual names of categories
+        inputs:
+            image_paths: list of image paths or can be a string too (for single image)
+            batch_size: batch_size for running predictions
+            image_size: size to which the image needs to be resized
+            categories: since the model predicts numbers, categories is the list of actual names of categories
         """
         if isinstance(image_paths, str):
             image_paths = [image_paths]
@@ -126,9 +121,10 @@ class Classifier:
         preds = []
         model_preds = []
         while len(loaded_images):
-            _model_preds = self.nsfw_model({"images": loaded_images[:batch_size]})[
-                "output"
-            ]
+            _model_preds = self.nsfw_model.run(
+                [self.nsfw_model.get_outputs()[0].name],
+                {self.nsfw_model.get_inputs()[0].name: loaded_images[:batch_size]},
+            )[0]
             model_preds.append(_model_preds)
             preds += np.argsort(_model_preds, axis=1).tolist()
             loaded_images = loaded_images[batch_size:]
