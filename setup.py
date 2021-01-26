@@ -18,14 +18,15 @@ URL = 'https://github.com/bedapudi6788/NudeNet'
 EMAIL = 'praneethbedapudi@gmail.com'
 AUTHOR = 'BEDAPUDI PRANEETH'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '2.0.6'
+VERSION = '2.0.7'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
     'pillow',
-    'opencv-python-headless',
+    'opencv-python-headless>=4.5.1.48',
     'pydload',
-    'scikit-image'
+    'scikit-image',
+    'onnxruntime'
 ]
 
 # What packages are optional?
