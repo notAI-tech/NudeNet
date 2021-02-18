@@ -148,7 +148,7 @@ class Classifier:
 
             images_preds[loaded_image_path] = {}
             for _ in range(len(preds[i])):
-                images_preds[loaded_image_path][preds[i][_]] = probs[i][_]
+                images_preds[loaded_image_path][preds[i][_]] = float(probs[i][_])
 
         return images_preds
 

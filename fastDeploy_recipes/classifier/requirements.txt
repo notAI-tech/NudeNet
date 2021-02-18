@@ -1,1 +1,1 @@
-nudenet==2.0.6
+nudenet==2.0.8

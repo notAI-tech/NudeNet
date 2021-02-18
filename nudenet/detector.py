@@ -156,7 +156,9 @@ class Detector:
                 continue
             box = box.astype(int).tolist()
             label = self.classes[label]
-            processed_boxes.append({"box": box, "score": score, "label": label})
+            processed_boxes.append(
+                {"box": [int(c) for c in box], "score": float(score), "label": label}
+            )
 
         return processed_boxes
 
