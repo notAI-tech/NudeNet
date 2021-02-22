@@ -108,7 +108,7 @@ class Classifier:
             image_size: size to which the image needs to be resized
             categories: since the model predicts numbers, categories is the list of actual names of categories
         """
-        if isinstance(image_paths, str):
+        if not isinstance(image_paths, list):
             image_paths = [image_paths]
 
         loaded_images, loaded_image_paths = load_images(
