@@ -1,6 +1,6 @@
 # NudeNet: Neural Nets for Nudity Classification, Detection and selective censoring
 
-[![DOI](https://zenodo.org/badge/173154449.svg)](https://zenodo.org/badge/latestdoi/173154449)
+[![DOI](https://zenodo.org/badge/173154449.svg)](https://zenodo.org/badge/latestdoi/173154449) ![Upload Python package](https://github.com/notAI-tech/NudeNet/actions/workflows/python-publish.yml/badge.svg)
 
 Uncensored version of the following image can be found at https://i.imgur.com/rga6845.jpg (NSFW)
 
