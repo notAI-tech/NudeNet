@@ -34,7 +34,7 @@ class Classifier:
             print("Downloading the checkpoint to", model_path)
             pydload.dload(url, save_to_path=model_path, max_time=None)
 
-        self.nsfw_model = onnxruntime.InferenceSession(model_path)
+        self.nsfw_model = onnxruntime.InferenceSession(model_path)        
 
     def classify_video(
         self,
@@ -93,7 +93,7 @@ class Classifier:
                 return_preds["preds"][frame_name][preds[i][_]] = probs[i][_]
 
         return return_preds
-
+    
     def classify(
         self,
         image_paths=[],
@@ -108,13 +108,41 @@ class Classifier:
             image_size: size to which the image needs to be resized
             categories: since the model predicts numbers, categories is the list of actual names of categories
         """
-        if isinstance(image_paths, str):
+        if isinstance(image_paths, str): # single file path
             image_paths = [image_paths]
-
-        loaded_images, loaded_image_paths = load_images(
-            image_paths, image_size, image_names=image_paths
-        )
-
+            loaded_images, loaded_image_paths = load_images(
+                image_paths, image_size, image_names=image_paths
+            )
+        elif isinstance(image_paths, np.ndarray): # single opencv frame
+            if image_paths.size != image_size:
+                image_paths = cv2.resize(image_paths, image_size, interpolation=cv2.INTER_AREA)
+        
+            img_array = np.asarray(image_paths, dtype="float32")
+            img_array /= 255
+            loaded_images = [img_array]
+            loaded_image_paths = [0]
+        elif isinstance(image_paths, list): # list
+            if len(image_paths) == 0:
+                return {}
+            
+            if isinstance(image_paths[0], str): # file path list
+                loaded_images, loaded_image_paths = load_images(
+                    image_paths, image_size, image_names=image_paths
+                )
+            elif isinstance(image_paths[0], np.ndarray): # opencv frame list
+                loaded_images = []
+                loaded_image_paths = []
+                for index, frame in enumerate(image_paths):
+                    frame = cv2.resize(frame, image_size, interpolation=cv2.INTER_AREA)				
+                    img_array = np.asarray(frame, dtype="float32")
+                    img_array /= 255
+                    loaded_images.append(img_array)
+                    loaded_image_paths.append(index)                    
+            else:
+                raise 'Unsupported input format'
+        else:
+            raise 'Unsupported input format'
+            
         if not loaded_image_paths:
             return {}
 
