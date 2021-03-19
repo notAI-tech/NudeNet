@@ -20,7 +20,10 @@ def predictor(in_images=[], batch_size=32):
 
     for in_img in in_images:
         try:
-            preds.append(detector.detect(in_img))
+            if "_fast_mode_" in in_img:
+                preds.append(detector.detect(in_img, mode="fast"))
+            else:
+                preds.append(detector.detect(in_img))
         except:
             preds.append(None)
 
