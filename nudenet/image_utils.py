@@ -1,4 +1,5 @@
 import os
+import io
 import cv2
 import pydload
 import logging
@@ -50,7 +51,7 @@ def load_img(
             "Could not import PIL.Image. " "The use of `load_img` requires PIL."
         )
 
-    if isinstance(path, type("")):
+    if isinstance(path, (str, io.IOBase)):
         img = pil_image.open(path)
     else:
         path = cv2.cvtColor(path, cv2.COLOR_BGR2RGB)
