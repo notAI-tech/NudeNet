@@ -12,7 +12,7 @@ URL = "https://github.com/notAI-tech/nudenet"
 EMAIL = "praneeth@bpraneeth.com"
 AUTHOR = "BEDAPUDI PRANEETH"
 REQUIRES_PYTHON = ">=3.6.0"
-VERSION = "3.0.0-dev2"
+VERSION = "3.0.0-dev3"
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -105,6 +105,9 @@ setup(
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     package_data={NAME: ["nudenet/best.onnx"]},
+    package_data={
+        'nudenet': ['nudenet/best.onnx'],   # '': ['*'] means all dirs
+    },
     include_package_data=True,
     license="MIT",
     classifiers=[
