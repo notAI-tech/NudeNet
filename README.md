@@ -11,6 +11,17 @@ nude_detector.detect('image.jpg') # Returns list of detections
 ```
 
 ```python
+detection_example = [
+ {'class': 'BELLY_EXPOSED',
+  'score': 0.799403190612793,
+  'box': [64, 182, 49, 51]},
+ {'class': 'FACE_FEMALE',
+  'score': 0.7881264686584473,
+  'box': [82, 66, 36, 43]},
+ ]
+```
+
+```python
 all_labels = [
     "FEMALE_GENITALIA_COVERED",
     "FACE_FEMALE",
