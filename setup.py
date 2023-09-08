@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-# Note: To use the 'upload' functionality of this file, you must:
-#   $ pip install twine
-
 import io
 import os
 import sys
@@ -110,7 +104,7 @@ setup(
     entry_points={"console_scripts": ["nudenet=nudenet:main"]},
     install_requires=REQUIRED,
     extras_require=EXTRAS,
-    package_data={NAME: ["nudenet-ui/*", "nudenet-ui/build/*"]},
+    package_data={NAME: ["nudenet/best.onnx"]},
     include_package_data=True,
     license="MIT",
     classifiers=[
