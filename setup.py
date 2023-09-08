@@ -17,8 +17,8 @@ VERSION = "3.0.0-dev1"
 # What packages are required for this module to be executed?
 REQUIRED = [
     "numpy",
-    "opencv-python",
     "onnxruntime",
+    "opencv-python",
 ]
 
 # What packages are optional?
