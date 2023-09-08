@@ -104,7 +104,6 @@ setup(
     entry_points={"console_scripts": ["nudenet=nudenet:main"]},
     install_requires=REQUIRED,
     extras_require=EXTRAS,
-    package_data={NAME: ["nudenet/best.onnx"]},
     package_data={
         'nudenet': ['nudenet/best.onnx'],   # '': ['*'] means all dirs
     },
