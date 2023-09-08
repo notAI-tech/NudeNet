@@ -1,3 +1,4 @@
+import os
 import cv2
 import numpy as np
 import onnxruntime
@@ -76,7 +77,9 @@ def _postprocess(output, img_width, img_height, input_width, input_height):
 
 class NudeDetector:
     def __init__(self):
-        self.onnx_session = onnxruntime.InferenceSession("best.onnx")
+        self.onnx_session = onnxruntime.InferenceSession(
+            os.path.join(os.path.dirname(__file__), "best.onnx")
+        )
         model_inputs = self.onnx_session.get_inputs()
         input_shape = model_inputs[0].shape
         self.input_width = input_shape[2]

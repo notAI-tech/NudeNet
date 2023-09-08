@@ -1,1 +1,1 @@
-from .nudenet import NudeDetect
+from .nudenet import NudeDetector
