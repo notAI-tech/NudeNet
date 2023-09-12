@@ -1,5 +1,7 @@
 # NudeNet: lightweight Nudity detection
 
+https://nudenet.notai.tech/ in-browser demo
+
 ```bash
 pip install --upgrade nudenet
 ```
