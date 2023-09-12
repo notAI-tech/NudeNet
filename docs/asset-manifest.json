@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/static/css/main.ed755b1a.css",
+    "main.js": "/static/js/main.a5d9e9c8.js",
+    "static/js/ort-wasm-simd-threaded.jsep.wasm": "/static/js/ort-wasm-simd-threaded.jsep.wasm",
+    "static/js/ort-wasm-simd.jsep.wasm": "/static/js/ort-wasm-simd.jsep.wasm",
+    "static/js/ort-wasm-simd.wasm": "/static/js/ort-wasm-simd.wasm",
+    "static/js/ort-wasm-simd-threaded.wasm": "/static/js/ort-wasm-simd-threaded.wasm",
+    "static/js/ort-wasm.wasm": "/static/js/ort-wasm.wasm",
+    "static/js/ort-wasm-threaded.wasm": "/static/js/ort-wasm-threaded.wasm",
+    "index.html": "/index.html",
+    "main.ed755b1a.css.map": "/static/css/main.ed755b1a.css.map",
+    "main.a5d9e9c8.js.map": "/static/js/main.a5d9e9c8.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.ed755b1a.css",
+    "static/js/main.a5d9e9c8.js"
+  ]
+}
