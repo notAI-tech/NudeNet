@@ -25,15 +25,39 @@ __labels = [
 ]
 
 
-def _read_image(image_path, input_width, input_height):
+def _read_image(image_path, target_size=320):
     # From ultralytics
     img = cv2.imread(image_path)
     img_height, img_width = img.shape[:2]
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = cv2.resize(img, (input_width, input_height))
+
+    # Calculate the aspect ratio
+    aspect = img_width / img_height
+
+    if img_height > img_width:
+        new_height = target_size
+        new_width = int(target_size * aspect)
+    else:
+        new_width = target_size
+        new_height = int(target_size / aspect)
+
+    # Resize the image preserving aspect ratio
+    img = cv2.resize(img, (new_width, new_height))
+
+    # Pad the shorter side to make the image square
+    pad_x = target_size - new_width  # Width padding
+    pad_y = target_size - new_height  # height padding
+
+    img = np.pad(
+        img,
+        ((pad_y // 2, pad_y - pad_y // 2), (pad_x // 2, pad_x - pad_x // 2), (0, 0)),
+        mode="edge",
+    )
+
     image_data = np.array(img) / 255.0
     image_data = np.transpose(image_data, (2, 0, 1))
     image_data = np.expand_dims(image_data, axis=0).astype(np.float32)
+
     return image_data, img_width, img_height
 
 
@@ -61,7 +85,7 @@ def _postprocess(output, img_width, img_height, input_width, input_height):
             scores.append(max_score)
             boxes.append([left, top, width, height])
 
-    indices = cv2.dnn.NMSBoxes(boxes, scores, 0.5, 0.5)
+    indices = cv2.dnn.NMSBoxes(boxes, scores, 0.25, 0.45)
 
     detections = []
     for i in indices:
@@ -82,13 +106,13 @@ class NudeDetector:
         )
         model_inputs = self.onnx_session.get_inputs()
         input_shape = model_inputs[0].shape
-        self.input_width = input_shape[2]
-        self.input_height = input_shape[3]
+        self.input_width = input_shape[2]  # 320
+        self.input_height = input_shape[3]  # 320
         self.input_name = model_inputs[0].name
 
     def detect(self, image_path):
         preprocessed_image, image_width, image_height = _read_image(
-            image_path, self.input_width, self.input_height
+            image_path, self.input_width
         )
         outputs = self.onnx_session.run(None, {self.input_name: preprocessed_image})
         detections = _postprocess(
