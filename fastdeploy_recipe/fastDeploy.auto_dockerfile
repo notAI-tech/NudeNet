@@ -1,0 +1,8 @@
+FROM python:3.10-slim
+RUN python3 -m pip install --upgrade --no-cache-dir pip fastdeploy
+ADD . /recipe
+RUN cd /recipe && python3 -m pip install --no-cache-dir -r requirements.txt
+RUN sudo chmod -R a+rw /recipe || chmod -R a+rw /recipe && cd /recipe && python3 predictor.py
+ENTRYPOINT ["/bin/sh", "-c"] 
+
+CMD ["ulimit -n 1000000 && python3 -m fastdeploy --recipe /recipe --mode loop & python3 -m fastdeploy --recipe /recipe --mode rest"] 
