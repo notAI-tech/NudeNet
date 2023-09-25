@@ -1,6 +1,6 @@
 # NudeNet: lightweight Nudity detection
 
-https://nudenet.notai.tech/ in-browser demo
+https://nudenet.notai.tech/ in-browser demo (the detector is run client side, i.e: in your browser, images are not sent to a server)
 
 ```bash
 pip install --upgrade nudenet
