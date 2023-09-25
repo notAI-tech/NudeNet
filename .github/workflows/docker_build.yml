@@ -3,7 +3,7 @@ name: Build docker image
 on:
   push:
     paths:
-      - 'fastdeploy_recipe/fastDeploy.auto_dockerfile'
+      - 'fastdeploy_recipe/requirements.txt'
 
 jobs:
   build:
