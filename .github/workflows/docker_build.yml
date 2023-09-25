@@ -29,4 +29,4 @@ jobs:
         context: ./fastdeploy_recipe/
         file: ./fastdeploy_recipe/fastDeploy.auto_dockerfile
         push: true
-        tags: ghcr.io/${{ github.repository_owner }}/nudenet:latest
+        tags: ghcr.io/notai-tech/nudenet:latest
