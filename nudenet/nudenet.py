@@ -74,7 +74,7 @@ def _postprocess(output, img_width, img_height, input_width, input_height):
         classes_scores = outputs[i][4:]
         max_score = np.amax(classes_scores)
 
-        if max_score >= 0.5:
+        if max_score >= 0.2:
             class_id = np.argmax(classes_scores)
             x, y, w, h = outputs[i][0], outputs[i][1], outputs[i][2], outputs[i][3]
             left = int((x - w / 2) * x_factor)
