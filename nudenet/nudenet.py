@@ -47,10 +47,13 @@ def _read_image(image_path, target_size=320):
     # Pad the shorter side to make the image square
     pad_x = target_size - new_width  # Width padding
     pad_y = target_size - new_height  # height padding
+    
+    offset_x = pad_x // 2
+    offset_y = pad_y // 2
 
     img = np.pad(
         img,
-        ((pad_y // 2, pad_y - pad_y // 2), (pad_x // 2, pad_x - pad_x // 2), (0, 0)),
+        ((offset_y, pad_y - offset_y), (offset_x, pad_x - offset_x), (0, 0)),
         mode="edge",
     )
 
@@ -58,10 +61,10 @@ def _read_image(image_path, target_size=320):
     image_data = np.transpose(image_data, (2, 0, 1))
     image_data = np.expand_dims(image_data, axis=0).astype(np.float32)
 
-    return image_data, img_width, img_height
+    return image_data, img_width, img_height, offset_x, offset_y
 
 
-def _postprocess(output, img_width, img_height, input_width, input_height):
+def _postprocess(output, img_width, img_height, input_width, input_height, offset_x, offset_y):
     outputs = np.transpose(np.squeeze(output[0]))
     rows = outputs.shape[0]
     boxes = []
@@ -77,8 +80,8 @@ def _postprocess(output, img_width, img_height, input_width, input_height):
         if max_score >= 0.2:
             class_id = np.argmax(classes_scores)
             x, y, w, h = outputs[i][0], outputs[i][1], outputs[i][2], outputs[i][3]
-            left = int((x - w / 2) * x_factor)
-            top = int((y - h / 2) * y_factor)
+            left = int((x - w / 2 + offset_x) * x_factor)
+            top = int((y - h / 2 + offset_y) * y_factor)
             width = int(w * x_factor)
             height = int(h * y_factor)
             class_ids.append(class_id)
@@ -112,12 +115,12 @@ class NudeDetector:
         self.input_name = model_inputs[0].name
 
     def detect(self, image_path):
-        preprocessed_image, image_width, image_height = _read_image(
+        preprocessed_image, image_width, image_height, offset_x, offset_y = _read_image(
             image_path, self.input_width
         )
         outputs = self.onnx_session.run(None, {self.input_name: preprocessed_image})
         detections = _postprocess(
-            outputs, image_width, image_height, self.input_width, self.input_height
+            outputs, image_width, image_height, self.input_width, self.input_height, offset_x, offset_y
         )
 
         return detections
