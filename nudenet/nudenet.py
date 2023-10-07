@@ -89,10 +89,10 @@ def _postprocess(output, resize_factor, pad_left, pad_top):
         if max_score >= 0.2:
             class_id = np.argmax(classes_scores)
             x, y, w, h = outputs[i][0], outputs[i][1], outputs[i][2], outputs[i][3]
-            left = int(math.round((x - w * 0.5 - pad_left) * resize_factor))
-            top = int(math.round((y - h * 0.5 - pad_top) * resize_factor))
-            width = int(math.round(w * resize_factor))
-            height = int(math.round(h * resize_factor))
+            left = int(round((x - w * 0.5 - pad_left) * resize_factor))
+            top = int(round((y - h * 0.5 - pad_top) * resize_factor))
+            width = int(round(w * resize_factor))
+            height = int(round(h * resize_factor))
             class_ids.append(class_id)
             scores.append(max_score)
             boxes.append([left, top, width, height])
