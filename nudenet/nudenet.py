@@ -68,10 +68,6 @@ def _read_image(image_path, target_size=320):
     image_data = np.transpose(image_data, (2, 0, 1))
     image_data = np.expand_dims(image_data, axis=0).astype(np.float32)
 
-    print("resize_factor = ", resize_factor, type(resize_factor))
-    print("pad_left = ", pad_left, type(pad_left))
-    print("pad_top = ", pad_top, type(pad_top))
-
     return image_data, resize_factor, pad_left, pad_top
 
 
@@ -143,4 +139,4 @@ class NudeDetector:
 
 if __name__ == "__main__":
     detector = NudeDetector()
-    #detections = detector.detect("/Users/praneeth.bedapudi/Desktop/images.jpeg")
+    detections = detector.detect("/Users/praneeth.bedapudi/Desktop/images.jpeg")
