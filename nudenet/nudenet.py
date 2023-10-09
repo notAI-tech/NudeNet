@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 import onnxruntime
+from onnxruntime.capi import _pybind_state as C
 
 __labels = [
     "FEMALE_GENITALIA_COVERED",
@@ -100,10 +101,10 @@ def _postprocess(output, img_width, img_height, input_width, input_height):
 
 
 class NudeDetector:
-    def __init__(self):
+    def __init__(self, providers=None):
         self.onnx_session = onnxruntime.InferenceSession(
             os.path.join(os.path.dirname(__file__), "best.onnx"),
-            providers=["CUDAExecutionProvider", "CPUExecutionProvider"],
+            providers=C.get_available_providers() if not providers else providers,
         )
         model_inputs = self.onnx_session.get_inputs()
         input_shape = model_inputs[0].shape
