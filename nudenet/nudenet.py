@@ -1,4 +1,5 @@
 import os
+import math
 import cv2
 import numpy as np
 import onnxruntime
@@ -37,21 +38,30 @@ def _read_image(image_path, target_size=320):
 
     if img_height > img_width:
         new_height = target_size
-        new_width = int(target_size * aspect)
+        new_width = int(round(target_size * aspect))
     else:
         new_width = target_size
-        new_height = int(target_size / aspect)
+        new_height = int(round(target_size / aspect))
 
+    # Resize factor
+    resize_factor = math.sqrt((img_width**2 + img_height**2)/(new_width**2 + new_height**2))
+    
     # Resize the image preserving aspect ratio
     img = cv2.resize(img, (new_width, new_height))
-
+    
     # Pad the shorter side to make the image square
     pad_x = target_size - new_width  # Width padding
     pad_y = target_size - new_height  # height padding
+    
+    # Amount of padding on each side
+    pad_left = pad_x // 2
+    pad_right = pad_x - pad_left
+    pad_top = pad_y // 2
+    pad_bottom = pad_y - pad_top
 
     img = np.pad(
         img,
-        ((pad_y // 2, pad_y - pad_y // 2), (pad_x // 2, pad_x - pad_x // 2), (0, 0)),
+        ((pad_top, pad_bottom), (pad_left, pad_right), (0, 0)),
         mode="edge",
     )
 
@@ -59,17 +69,15 @@ def _read_image(image_path, target_size=320):
     image_data = np.transpose(image_data, (2, 0, 1))
     image_data = np.expand_dims(image_data, axis=0).astype(np.float32)
 
-    return image_data, img_width, img_height
+    return image_data, resize_factor, pad_left, pad_top
 
 
-def _postprocess(output, img_width, img_height, input_width, input_height):
+def _postprocess(output, resize_factor, pad_left, pad_top):
     outputs = np.transpose(np.squeeze(output[0]))
     rows = outputs.shape[0]
     boxes = []
     scores = []
     class_ids = []
-    x_factor = img_width / input_width
-    y_factor = img_height / input_height
 
     for i in range(rows):
         classes_scores = outputs[i][4:]
@@ -78,10 +86,10 @@ def _postprocess(output, img_width, img_height, input_width, input_height):
         if max_score >= 0.2:
             class_id = np.argmax(classes_scores)
             x, y, w, h = outputs[i][0], outputs[i][1], outputs[i][2], outputs[i][3]
-            left = int((x - w / 2) * x_factor)
-            top = int((y - h / 2) * y_factor)
-            width = int(w * x_factor)
-            height = int(h * y_factor)
+            left = int(round((x - w * 0.5 - pad_left) * resize_factor))
+            top = int(round((y - h * 0.5 - pad_top) * resize_factor))
+            width = int(round(w * resize_factor))
+            height = int(round(h * resize_factor))
             class_ids.append(class_id)
             scores.append(max_score)
             boxes.append([left, top, width, height])
@@ -113,12 +121,12 @@ class NudeDetector:
         self.input_name = model_inputs[0].name
 
     def detect(self, image_path):
-        preprocessed_image, image_width, image_height = _read_image(
+        preprocessed_image, resize_factor, pad_left, pad_top = _read_image(
             image_path, self.input_width
         )
         outputs = self.onnx_session.run(None, {self.input_name: preprocessed_image})
         detections = _postprocess(
-            outputs, image_width, image_height, self.input_width, self.input_height
+            outputs, resize_factor, pad_left, pad_top
         )
 
         return detections
