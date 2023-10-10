@@ -24,6 +24,12 @@ detection_example = [
 ```
 
 ```python
+nude_detector.censor('image.jpg') # returns censored image output path
+
+# optional censor(self, image_path, classes=[], output_path=None) classes and output_path can be passed
+```
+
+```python
 all_labels = [
     "FEMALE_GENITALIA_COVERED",
     "FACE_FEMALE",
