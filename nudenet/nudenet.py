@@ -28,12 +28,10 @@ __labels = [
 
 
 def _read_image(image_path, target_size=320):
-    # From ultralytics
     img = cv2.imread(image_path)
     img_height, img_width = img.shape[:2]
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    # Calculate the aspect ratio
     aspect = img_width / img_height
 
     if img_height > img_width:
@@ -43,31 +41,33 @@ def _read_image(image_path, target_size=320):
         new_width = target_size
         new_height = int(round(target_size / aspect))
 
-    # Resize factor
-    resize_factor = math.sqrt((img_width**2 + img_height**2)/(new_width**2 + new_height**2))
-    
-    # Resize the image preserving aspect ratio
-    img = cv2.resize(img, (new_width, new_height))
-    
-    # Pad the shorter side to make the image square
-    pad_x = target_size - new_width  # Width padding
-    pad_y = target_size - new_height  # height padding
-    
-    # Amount of padding on each side
-    pad_left = pad_x // 2
-    pad_right = pad_x - pad_left
-    pad_top = pad_y // 2
-    pad_bottom = pad_y - pad_top
-
-    img = np.pad(
-        img,
-        ((pad_top, pad_bottom), (pad_left, pad_right), (0, 0)),
-        mode="edge",
+    resize_factor = math.sqrt(
+        (img_width**2 + img_height**2) / (new_width**2 + new_height**2)
     )
 
-    image_data = np.array(img) / 255.0
+    img = cv2.resize(img, (new_width, new_height))
+
+    pad_x = target_size - new_width
+    pad_y = target_size - new_height
+
+    pad_top, pad_bottom = [int(i) for i in np.floor([pad_y, pad_y]) / 2]
+    pad_left, pad_right = [int(i) for i in np.floor([pad_x, pad_x]) / 2]
+
+    img = cv2.copyMakeBorder(
+        img,
+        pad_top,
+        pad_bottom,
+        pad_left,
+        pad_right,
+        cv2.BORDER_CONSTANT,
+        value=[0, 0, 0],
+    )
+
+    img = cv2.resize(img, (target_size, target_size))
+
+    image_data = img.astype("float32") / 255.0  # normalize
     image_data = np.transpose(image_data, (2, 0, 1))
-    image_data = np.expand_dims(image_data, axis=0).astype(np.float32)
+    image_data = np.expand_dims(image_data, axis=0)
 
     return image_data, resize_factor, pad_left, pad_top
 
@@ -125,11 +125,32 @@ class NudeDetector:
             image_path, self.input_width
         )
         outputs = self.onnx_session.run(None, {self.input_name: preprocessed_image})
-        detections = _postprocess(
-            outputs, resize_factor, pad_left, pad_top
-        )
+        detections = _postprocess(outputs, resize_factor, pad_left, pad_top)
 
         return detections
+
+    def censor(self, image_path, classes=[], output_path=None):
+        detections = self.detect(image_path)
+        if classes:
+            detections = [
+                detection for detection in detections if detection["class"] in classes
+            ]
+
+        img = cv2.imread(image_path)
+
+        for detection in detections:
+            box = detection["box"]
+            x, y, w, h = box[0], box[1], box[2], box[3]
+            # change these pixels to pure black
+            img[y : y + h, x : x + w] = (0, 0, 0)
+
+        if not output_path:
+            image_path, ext = os.path.splitext(image_path)
+            output_path = f"{image_path}_censored{ext}"
+
+        cv2.imwrite(output_path, img)
+
+        return output_path
 
 
 if __name__ == "__main__":
