@@ -11,7 +11,6 @@ def scanning_process(list_of_dirs, list_of_ignored_dirs):
             "image_path": "string",
             "image_size": "number",
             "image_hash": "string",
-
             "FEMALE_GENITALIA_COVERED": "number",
             "FACE_FEMALE": "number",
             "BUTTOCKS_EXPOSED": "number",
@@ -31,7 +30,7 @@ def scanning_process(list_of_dirs, list_of_ignored_dirs):
             "FEMALE_BREAST_COVERED": "number",
             "BUTTOCKS_COVERED": "number",
         },
-        db_path="images_index.db"
+        db_path="images_index.db",
     )
 
     detector = NudeDetector()
@@ -40,15 +39,19 @@ def scanning_process(list_of_dirs, list_of_ignored_dirs):
         for file in iglob(os.path.join(dir, "**", "*.*"), recursive=True):
             if os.path.isfile(file):
                 if os.path.splitext(file)[1].lower() in [".jpg", ".jpeg", ".png"]:
-                    if not any(ignored_dir in file for ignored_dir in list_of_ignored_dirs):
+                    if not any(
+                        ignored_dir in file for ignored_dir in list_of_ignored_dirs
+                    ):
                         preds = detector.detect(file)
-                        data = {p['class']: float(p['score']) for p in preds}
-                        data['image_path'] = file
-                        data['image_size'] = os.path.getsize(file)
-                        data['image_hash'] = hashlib.sha256(open(file, 'rb').read()).hexdigest()
+                        data = {p["class"]: float(p["score"]) for p in preds}
+                        data["image_path"] = file
+                        data["image_size"] = os.path.getsize(file)
+                        data["image_hash"] = hashlib.sha256(
+                            open(file, "rb").read()
+                        ).hexdigest()
 
-                        images_index.update({data['image_hash']: data})
+                        images_index.update({data["image_hash"]: data})
+
 
 if __name__ == "__main__":
     scanning_process(["/Users/praneeth.bedapudi/Desktop"], [])
-

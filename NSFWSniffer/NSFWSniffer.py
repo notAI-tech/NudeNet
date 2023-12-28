@@ -1,11 +1,21 @@
 import qdarktheme
 import sys
 from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QHBoxLayout, QPushButton, QLabel, QWidget,
-    QLineEdit, QSpinBox, QVBoxLayout, QSlider, QListWidget, QFileDialog, QSplitter
+    QApplication,
+    QMainWindow,
+    QHBoxLayout,
+    QPushButton,
+    QLabel,
+    QWidget,
+    QLineEdit,
+    QSpinBox,
+    QVBoxLayout,
+    QSlider,
+    QListWidget,
+    QFileDialog,
+    QSplitter,
 )
 
-from PySide6.QtCore import QTimer
 
 from liteindex import KVIndex, DefinedIndex
 
@@ -19,7 +29,6 @@ images_index = DefinedIndex(
         "image_path": "string",
         "image_size": "number",
         "image_hash": "string",
-
         "FEMALE_GENITALIA_COVERED": "number",
         "FACE_FEMALE": "number",
         "BUTTOCKS_EXPOSED": "number",
@@ -39,11 +48,8 @@ images_index = DefinedIndex(
         "FEMALE_BREAST_COVERED": "number",
         "BUTTOCKS_COVERED": "number",
     },
-    db_path="images_index.db"
+    db_path="images_index.db",
 )
-
-from scanning_process import scanning_process
-import threading
 
 
 class NSFWSniffer(QMainWindow):
@@ -51,26 +57,21 @@ class NSFWSniffer(QMainWindow):
         super().__init__()
         self.setWindowTitle("NSFW Sniffer")
         self.settings_index = KVIndex("settings.db")
+        self.images_index = images_index
 
         splitter = QSplitter()
 
-        # Add settings panel to splitter (left side)
-        self.settings_panel = SettingsBar(self.settings_index)
+        self.settings_panel = SettingsBar(self.settings_index, self.images_index)
         splitter.addWidget(self.settings_panel)
-        
-        # Add image gallery to splitter (right side)
-        splitter.addWidget(ImageGallery())
-        
-        # Adjust initial sizes (e.g., 30% for settings and 70% for the gallery)
-        # Based on a hypothetical total width of 1000 for example purposes
+
+        splitter.addWidget(ImageGallery(self.images_index))
+
         splitter.setSizes([300, 700])
 
-        # Window central widget
         central_widget = QWidget()
         central_widget_layout = QHBoxLayout(central_widget)
         central_widget_layout.addWidget(splitter)
         self.setCentralWidget(central_widget)
-
 
 
 if __name__ == "__main__":
