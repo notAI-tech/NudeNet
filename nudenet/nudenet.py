@@ -149,7 +149,7 @@ class NudeDetector:
             os.path.join(os.path.dirname(__file__), "320n.onnx")
             if not model_path
             else model_path,
-            # providers=C.get_available_providers() if not providers else providers,
+            providers=C.get_available_providers() if not providers else providers,
         )
         model_inputs = self.onnx_session.get_inputs()
 
