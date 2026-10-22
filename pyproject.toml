@@ -1,0 +1,43 @@
+[project]
+name = "nudenet"
+version = "3.4.3"
+description = "Lightweight Nudity Detection"
+authors = [
+    {name = "BEDAPUDI PRANEETH",email = "praneeth@bpraneeth.com"}
+]
+license = {text = "GNU AFFERO GENERAL PUBLIC LICENSE"}
+readme = "README.md"
+requires-python = ">=3.12.0"
+dependencies = [
+    "opencv-python-headless (>=5.0.0.93,<6.0.0.0)",
+    "numpy (>=2.5.2,<3.0.0)",    
+]
+
+[project.urls]
+repository = "https://github.com/notAI-tech/nudenet"
+
+[project.optional-dependencies]
+cpu = ["onnxruntime (>=1.28.0,<2.0.0) ; extra != \"gpu\" and extra == \"cpu\""]
+gpu = ["onnxruntime-gpu (>=1.28.0,<2.0.0) ; extra == \"gpu\" and extra != \"cpu\""]
+fancy = ["django (>=6.1,<7.0)"]
+
+[project.scripts]
+nudenet="nudenet.nudenet:main"
+
+[tool.poetry]
+packages = [
+    { include = "nudenet"},
+    { include = "nudenet/320n.onnx"},
+]
+classifiers = [
+    # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
